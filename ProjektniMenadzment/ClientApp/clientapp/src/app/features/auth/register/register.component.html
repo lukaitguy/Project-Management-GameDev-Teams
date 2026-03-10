@@ -1,0 +1,131 @@
+<div class="auth-card">
+  <h1>Registracija</h1>
+  <p class="subtitle">Kreirajte novi korisnički nalog</p>
+
+  <form class="auth-form" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="ime">Ime</label>
+      <input id="ime" type="text" placeholder="Unesite ime" formControlName="ime" />
+
+      @if (registerForm.get('ime')?.touched && registerForm.get('ime')?.invalid) {
+        <div class="error-message">
+          @if (registerForm.get('ime')?.errors?.['required']) {
+            <small>Ime je obavezno.</small>
+          }
+          @if (registerForm.get('ime')?.errors?.['minlength']) {
+            <small>Ime mora imati najmanje 2 karaktera.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="prezime">Prezime</label>
+      <input id="prezime" type="text" placeholder="Unesite prezime" formControlName="prezime" />
+
+      @if (registerForm.get('prezime')?.touched && registerForm.get('prezime')?.invalid) {
+        <div class="error-message">
+          @if (registerForm.get('prezime')?.errors?.['required']) {
+            <small>Prezime je obavezno.</small>
+          }
+          @if (registerForm.get('prezime')?.errors?.['minlength']) {
+            <small>Prezime mora imati najmanje 2 karaktera.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="korisnickoIme">Korisničko ime</label>
+      <input id="korisnickoIme" type="text" placeholder="Unesite korisničko ime" formControlName="korisnickoIme" />
+
+      @if (registerForm.get('korisnickoIme')?.touched && registerForm.get('korisnickoIme')?.invalid) {
+        <div class="error-message">
+          @if (registerForm.get('korisnickoIme')?.errors?.['required']) {
+            <small>Korisničko ime je obavezno.</small>
+          }
+          @if (registerForm.get('korisnickoIme')?.errors?.['minlength']) {
+            <small>Korisničko ime mora imati najmanje 3 karaktera.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email adresa</label>
+      <input id="email" type="email" placeholder="Unesite email adresu" formControlName="email" />
+
+      @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+        <div class="error-message">
+          @if (registerForm.get('email')?.errors?.['required']) {
+            <small>Email adresa je obavezna.</small>
+          }
+          @if (registerForm.get('email')?.errors?.['email']) {
+            <small>Unesite ispravnu email adresu.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="brojTelefona">Broj telefona</label>
+      <input id="brojTelefona" type="text" placeholder="Unesite broj telefona" formControlName="brojTelefona" />
+    </div>
+
+    <div class="form-group">
+      <label for="lozinka">Lozinka</label>
+      <input id="lozinka" type="password" placeholder="Unesite lozinku" formControlName="lozinka" />
+
+      @if (registerForm.get('lozinka')?.touched && registerForm.get('lozinka')?.invalid) {
+        <div class="error-message">
+          @if (registerForm.get('lozinka')?.errors?.['required']) {
+            <small>Lozinka je obavezna.</small>
+          }
+          @if (registerForm.get('lozinka')?.errors?.['minlength']) {
+            <small>Lozinka mora imati najmanje 6 karaktera.</small>
+          }
+        </div>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="potvrdaLozinke">Potvrda lozinke</label>
+      <input id="potvrdaLozinke" type="password" placeholder="Ponovo unesite lozinku" formControlName="potvrdaLozinke" />
+
+      @if (registerForm.get('potvrdaLozinke')?.touched && registerForm.get('potvrdaLozinke')?.invalid) {
+        <div class="error-message">
+          @if (registerForm.get('potvrdaLozinke')?.errors?.['required']) {
+            <small>Potvrda lozinke je obavezna.</small>
+          }
+        </div>
+      }
+
+      @if (registerForm.errors?.['lozinkeSeNePoklapaju'] && registerForm.get('potvrdaLozinke')?.touched) {
+        <div class="error-message">
+          <small>Lozinke se ne poklapaju.</small>
+        </div>
+      }
+    </div>
+
+    @if (porukaGreske) {
+      <div class="error-message">
+        <small>{{ porukaGreske }}</small>
+      </div>
+    }
+
+    @if (porukaUspeha) {
+      <div class="success-message">
+        <small>{{ porukaUspeha }}</small>
+      </div>
+    }
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Registracija u toku...' : 'Registruj se' }}
+    </button>
+  </form>
+
+  <p class="auth-link">
+    Već imate nalog?
+    <a routerLink="/prijava">Prijavite se</a>
+  </p>
+</div>

@@ -1,0 +1,13 @@
+.auth-layout {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(to right, #eff6ff, #dbeafe);
+  padding: 24px;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 460px;
+}
