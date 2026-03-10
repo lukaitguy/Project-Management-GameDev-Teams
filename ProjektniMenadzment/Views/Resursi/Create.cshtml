@@ -1,0 +1,58 @@
+﻿@model ProjektniMenadzment.Models.ViewModels.CreateResursViewModel
+
+@{
+    ViewData["Title"] = "Kreiranje resursa";
+}
+
+<h2 class="mb-4">➕ Kreiraj novi resurs</h2>
+
+<form asp-action="Create" method="post" class="card shadow-sm p-4">
+    <div class="mb-3">
+        <label asp-for="Naziv" class="form-label fw-bold"></label>
+        <input asp-for="Naziv" class="form-control" />
+        <span asp-validation-for="Naziv" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Tip" class="form-label fw-bold"></label>
+        <input asp-for="Tip" class="form-control" />
+        <span asp-validation-for="Tip" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Opis" class="form-label fw-bold"></label>
+        <textarea asp-for="Opis" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Cena" class="form-label fw-bold"></label>
+        <input asp-for="Cena" class="form-control" type="number" step="0.01" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ProjekatId" class="form-label fw-bold">Projekat</label>
+        <select asp-for="ProjekatId" asp-items="Model.Projekti" class="form-select">
+            <option value="">-- Odaberi projekat --</option>
+        </select>
+        <span asp-validation-for="ProjekatId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="DodeljenKorisniku" class="form-label fw-bold">Dodeli korisniku</label>
+        <select asp-for="DodeljenKorisniku" asp-items="Model.Korisnici" class="form-select">
+            <option value="">-- Odaberi korisnika --</option>
+        </select>
+        <span asp-validation-for="DodeljenKorisniku" class="text-danger"></span>
+    </div>
+
+    <div class="d-flex gap-1">
+        <button type="submit" class="btn btn-primary">Sacuvaj</button>
+        <a asp-action="Index" class="btn btn-secondary">Nazad</a>
+    </div>
+
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+

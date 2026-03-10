@@ -1,0 +1,74 @@
+﻿@using ProjektniMenadzment.Models.ViewModels
+@model List<KorisniciViewModel>
+@{
+    var roles = (List<string>)ViewBag.AllRoles;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Korisnici</h2>
+    <a asp-action="Create" class="btn btn-success">
+        <i class="bi bi-person-plus"></i> Dodaj korisnika
+    </a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input name="search" value="@ViewBag.Search" class="form-control" placeholder="Pretraga (username/email)" />
+    </div>
+    <div class="col-md-3">
+        <select name="role" class="form-select">
+            <option value="">-- Sve uloge --</option>
+            @foreach (var r in roles)
+            {
+                <option value="@r" selected="@(ViewBag.Role == r)">@r</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3 d-flex align-items-center">
+        <input class="form-check-input me-2" type="checkbox" name="onlyLinked" value="true" @(ViewBag.OnlyLinked ? "checked" : "") />
+        <label class="form-check-label">Samo povezani (App)</label>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-dark w-100" type="submit">Filtriraj</button>
+    </div>
+</form>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Ime i prezime</th>
+            <th>Uloge</th>
+            <th class="text-end">Projekti</th>
+            <th class="text-end">Zadaci</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.UserName</td>
+                <td>@u.Email</td>
+                <td>
+                    @(u.Ime ?? "") @(u.Prezime ?? "")
+                    @if (!u.isLinked)
+                    {
+                        <span class="badge bg-warning text-dark ms-2">nije povezan</span>
+                    }
+                </td>
+                <td>@string.Join(", ", u.Roles)</td>
+                <td class="text-end">@u.ProjektiCount</td>
+                <td class="text-end">@u.ZadaciCount</td>
+                <td class="text-nowrap">
+                    <a asp-action="Edit" asp-route-id="@u.IdentityUserId" class="btn btn-sm btn-primary">Uredi</a>
+                    <form asp-action="Delete" asp-route-id="@u.IdentityUserId" method="post" class="d-inline"
+                          onsubmit="return confirm('Obrisati korisnika i povezane podatke?');">
+                        <button class="btn btn-sm btn-danger">Obrisi</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

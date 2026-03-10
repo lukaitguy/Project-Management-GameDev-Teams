@@ -1,0 +1,81 @@
+﻿@using ProjektniMenadzment.Models.ViewModels
+
+@model KreirajKorisnikaViewModel
+@{
+    var allRoles = (List<string>)ViewBag.AllRoles;
+    ViewData["Title"] = "Kreiraj korisnika";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="post" class="row g-3">
+    <div class="col-md-4">
+        <label class="form-label">Username</label>
+        <input class="form-control" asp-for="UserName" />
+        <span class="text-danger" asp-validation-for="UserName"></span>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Email</label>
+        <input class="form-control" asp-for="Email" />
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Lozinka</label>
+        <input class="form-control" asp-for="Password" type="password" />
+        <span class="text-danger" asp-validation-for="Password"></span>
+    </div>
+
+    <div class="col-12">
+        <label class="form-label d-block">Uloge</label>
+        @foreach (var r in allRoles)
+        {
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" name="Roles" value="@r" id="role_@r" />
+                <label class="form-check-label" for="role_@r">@r</label>
+            </div>
+        }
+        <div class="form-text">Ako ništa ne izabereš, dodeliće se uloga "Korisnik".</div>
+    </div>
+
+    <div class="col-12 form-check">
+        <input class="form-check-input" type="checkbox" asp-for="KreirajAppProfil" id="kreirajApp" />
+        <label class="form-check-label" for="kreirajApp">Kreiraj i App profil</label>
+    </div>
+
+    <div class="col-12 border rounded p-3" id="appFields">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Ime</label>
+                <input class="form-control" asp-for="Ime" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Prezime</label>
+                <input class="form-control" asp-for="Prezime" />
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Telefon</label>
+                <input class="form-control" asp-for="BrojTelefona" />
+            </div>
+            <div class="col-12">
+                <label class="form-label">Biografija</label>
+                <textarea class="form-control" asp-for="Biografija" rows="3"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 d-flex gap-2">
+        <button class="btn btn-primary" type="submit">Sacuvaj</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Nazad</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const chk = document.getElementById('kreirajApp');
+        const box = document.getElementById('appFields');
+        function toggleApp() { box.style.display = chk.checked ? 'block' : 'none'; }
+        chk.addEventListener('change', toggleApp);
+        toggleApp();
+    </script>
+}
