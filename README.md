@@ -92,11 +92,3 @@ Data Access Layer (via Repository Pattern)
 Presentation Layer (MVC Views & Controllers)
 
 Development followed the Database-First approach — allowing practice in both SQL schema design and reverse engineering the EF Core model.
-
-🗄️ Entity–Relationship Diagram
-
-Below is the full ER diagram of the database structure:
-
-📷 ER Diagram
-
-![ER Dijagram](Slike/Baza.png)
