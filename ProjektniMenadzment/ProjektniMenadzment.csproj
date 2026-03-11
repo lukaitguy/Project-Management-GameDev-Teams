@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="ClientApp\clientapp\src\app\core\models\auth\" />
     <Folder Include="ClientApp\clientapp\src\app\core\services\" />
     <Folder Include="ClientApp\clientapp\src\app\layout\" />
     <Folder Include="ClientApp\clientapp\src\app\shared\" />

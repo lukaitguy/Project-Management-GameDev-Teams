@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { TestService } from './core/services/test.service';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,12 +13,10 @@ export class AppComponent implements OnInit {
   title = 'clientapp';
   message = '';
 
-  constructor(private testService: TestService) { }
+  constructor(private authService: AuthService) { }
 
   ngOnInit() {
-    this.testService.getMessage().subscribe(res => {
-      this.message = res.message;
-    })
+    this.authService.ucitajTrenutnogKorisnika().subscribe();
   }
 
 

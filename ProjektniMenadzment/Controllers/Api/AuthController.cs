@@ -126,5 +126,26 @@ namespace ProjektniMenadzment.Controllers.Api
                 }
             });
         }
+
+        [HttpGet("trenutni-korisnik")]
+        public IActionResult TrenutniKorisnik()
+        {
+            if (!User.Identity?.IsAuthenticated ?? true)
+            {
+                return Unauthorized(new { message = "Korisnik nije prijavljen." });
+            }
+
+            return Ok(new
+            {
+                korisnickoIme = User.Identity!.Name
+            });
+        }
+
+        [HttpPost("odjava")]
+        public async Task<IActionResult> Odjava()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok(new { message = "Uspešna odjava." });
+        }
     }
 }

@@ -1,15 +1,30 @@
 <header class="navbar">
   <div class="container navbar-content">
+
     <div class="logo">
-      <a routerLink="/"><img src="assets/images/navbar_logo.png" alt="Logo" /></a>
+      <a routerLink="/">
+        <img src="assets/images/navbar_logo.png" alt="Logo" />
+      </a>
     </div>
 
     <nav class="nav-links">
       <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Početna</a>
       <a routerLink="/o-nama" routerLinkActive="active">O nama</a>
       <a routerLink="/kontakt" routerLinkActive="active">Kontakt</a>
-      <a routerLink="/prijava" class="btn-outline">Prijava</a>
-      <a routerLink="/registracija" class="btn-primary">Registracija</a>
+
+      @if (trenutniKorisnik) {
+        <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+
+        <span class="user-info">
+          Zdravo, {{ trenutniKorisnik.korisnickoIme }}
+        </span>
+
+        <button class="btn-logout" (click)="odjava()">Odjava</button>
+      } @else {
+        <a routerLink="/prijava" routerLinkActive="active" class="btn-outline">Prijava</a>
+        <a routerLink="/registracija" routerLinkActive="active" class="btn-primary">Registracija</a>
+      }
     </nav>
+
   </div>
 </header>

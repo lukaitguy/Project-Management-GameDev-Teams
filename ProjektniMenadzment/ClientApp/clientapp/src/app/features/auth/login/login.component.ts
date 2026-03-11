@@ -34,29 +34,31 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  onSubmit() {
-    console.log('NOVI LOGGIN');
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
-    }
-
-    this.loading = true;
-    this.porukaGreske = '';
-
-    this.authService.prijava(this.loginForm.getRawValue()).subscribe({
-      next: (res) => {
-        console.log('Uspešna prijava:', res);
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        console.error(err);
-        this.porukaGreske = err?.error?.message || 'Došlo je do greške pri prijavi.';
-        this.loading = false;
-      },
-      complete: () => {
-        this.loading = false;
-      }
-    });
+onSubmit() {
+  if (this.loading) {
+    return;
   }
+
+  if (this.loginForm.invalid) {
+    this.loginForm.markAllAsTouched();
+    return;
+  }
+
+  this.loading = true;
+  this.porukaGreske = '';
+
+  this.authService.prijava(this.loginForm.getRawValue()).subscribe({
+    next: () => {
+      this.router.navigate(['/dashboard']);
+    },
+    error: (err) => {
+      console.error(err);
+      this.porukaGreske = err?.error?.message || 'Došlo je do greške pri prijavi.';
+      this.loading = false;
+    },
+    complete: () => {
+      this.loading = false;
+    }
+  });
+}
 }

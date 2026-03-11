@@ -7,6 +7,8 @@ import { AuthLayoutComponent } from './layout/auth-layout/auth-layout.component'
 import { LoginComponent } from './features/auth/login/login.component';
 import { RegisterComponent } from './features/auth/register/register.component';
 import { HomeComponent as DashboardHomeComponent } from './features/dashboard/home/home.component';
+import { authGuard } from './core/guards/auth.guard';
+import { guestGuard } from './core/guards/guest.guard';
 
 export const routes: Routes = [
     {
@@ -23,13 +25,16 @@ export const routes: Routes = [
                 path: 'kontakt', component: ContactComponent
             },
             {
-                path: 'dashboard', component: DashboardHomeComponent
+                path: 'dashboard', 
+                component: DashboardHomeComponent,
+                canActivate: [authGuard]
             }
         ]
     },
     {
         path: '',
         component: AuthLayoutComponent,
+        canActivate: [guestGuard],
         children: [
             {
                 path: 'prijava', component: LoginComponent
