@@ -25,9 +25,13 @@ public partial class Zadaci
 
     public DateTime DatumKreiranja { get; set; }
 
+    public string? TipZadatka { get; set; }
+
     public virtual Korisnici? DodeljenKorisniku { get; set; }
 
     public virtual ICollection<KomentariZadatak> KomentariZadataks { get; set; } = new List<KomentariZadatak>();
 
     public virtual Korisnici KreiraoKorisnik { get; set; } = null!;
+
+    public virtual Projekti Projekat { get; set; } = null!;
 }

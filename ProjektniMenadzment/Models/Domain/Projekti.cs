@@ -25,10 +25,23 @@ public partial class Projekti
 
     public DateTime DatumKreiranja { get; set; }
 
-    public ICollection<ClanoviProjektum> ClanoviProjekta { get; set; }
+    public string? VerzijaIgre { get; set; }
+
+    public string? Engine { get; set; }
+
+    public string? Platforma { get; set; }
+
+    public string? FazaRazvoja { get; set; }
+
+    public DateTime? DatumPoslednjegBuilda { get; set; }
+
+    public virtual ICollection<Buildovi> Buildovis { get; set; } = new List<Buildovi>();
+
+    public virtual ICollection<ClanoviProjektum> ClanoviProjekta { get; set; } = new List<ClanoviProjektum>();
+
     public virtual ICollection<Resursi> Resursis { get; set; } = new List<Resursi>();
 
-    public virtual Korisnici KreiraoKorisnik { get; set; } = null!;
+    public virtual ICollection<Zadaci> Zadacis { get; set; } = new List<Zadaci>();
 
     public virtual Zanrovi? Zanr { get; set; }
 }

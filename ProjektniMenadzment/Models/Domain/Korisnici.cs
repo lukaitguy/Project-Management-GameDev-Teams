@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjektniMenadzment.Models.Domain;
 
@@ -21,7 +19,9 @@ public partial class Korisnici
 
     public DateTime DatumKreiranja { get; set; }
 
-    public ICollection<ClanoviProjektum> ClanoviProjekta { get; set; }
+    public string? IdentityUserId { get; set; }
+
+    public virtual ICollection<ClanoviProjektum> ClanoviProjekta { get; set; } = new List<ClanoviProjektum>();
 
     public virtual ICollection<KomentariZadatak> KomentariZadataks { get; set; } = new List<KomentariZadatak>();
 
@@ -30,7 +30,4 @@ public partial class Korisnici
     public virtual ICollection<Zadaci> ZadaciDodeljenKorisnikus { get; set; } = new List<Zadaci>();
 
     public virtual ICollection<Zadaci> ZadaciKreiraoKorisniks { get; set; } = new List<Zadaci>();
-
-    // FK prema AspNetUsers
-    public string IdentityUserId { get; set; } = null!;
 }

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using ProjektniMenadzment.Models.Domain;
 
-namespace ProjektniMenadzment.Data;
+namespace ProjektniMenadzment.Models.Domain;
 
 public partial class PMDbContext : DbContext
 {
@@ -15,6 +14,8 @@ public partial class PMDbContext : DbContext
         : base(options)
     {
     }
+
+    public virtual DbSet<Buildovi> Buildovis { get; set; }
 
     public virtual DbSet<ClanoviProjektum> ClanoviProjekta { get; set; }
 
@@ -35,22 +36,38 @@ public partial class PMDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Buildovi>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Buildovi__3214EC0721128050");
+
+            entity.ToTable("Buildovi");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.DatumBuilda)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.NazivBuilda).HasMaxLength(100);
+            entity.Property(e => e.PatchNapomene).HasMaxLength(500);
+            entity.Property(e => e.TipBuilda).HasMaxLength(30);
+            entity.Property(e => e.Verzija).HasMaxLength(20);
+
+            entity.HasOne(d => d.Projekat).WithMany(p => p.Buildovis)
+                .HasForeignKey(d => d.ProjekatId)
+                .HasConstraintName("Fk_Buildovi_Projekat");
+        });
+
         modelBuilder.Entity<ClanoviProjektum>(entity =>
         {
             entity.HasKey(e => new { e.ProjekatId, e.KorisnikId });
 
             entity.Property(e => e.Uloga).HasMaxLength(50);
 
-            entity.HasOne(d => d.Korisnik)
-                .WithMany(p => p.ClanoviProjekta)
+            entity.HasOne(d => d.Korisnik).WithMany(p => p.ClanoviProjekta)
                 .HasForeignKey(d => d.KorisnikId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ClanoviProjekta_Korisnici");
 
-            entity.HasOne(d => d.Projekat)
-                .WithMany(p => p.ClanoviProjekta)
+            entity.HasOne(d => d.Projekat).WithMany(p => p.ClanoviProjekta)
                 .HasForeignKey(d => d.ProjekatId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ClanoviProjekta_Projekti");
         });
 
@@ -69,7 +86,6 @@ public partial class PMDbContext : DbContext
 
             entity.HasOne(d => d.Zadatak).WithMany(p => p.KomentariZadataks)
                 .HasForeignKey(d => d.ZadatakId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_KomentariZadatak_Zadaci");
         });
 
@@ -82,6 +98,7 @@ public partial class PMDbContext : DbContext
             entity.Property(e => e.BrojTelefona).HasMaxLength(50);
             entity.Property(e => e.DatumKreiranja).HasColumnType("datetime");
             entity.Property(e => e.Email).HasMaxLength(50);
+            entity.Property(e => e.IdentityUserId).HasMaxLength(450);
             entity.Property(e => e.Ime).HasMaxLength(50);
             entity.Property(e => e.Prezime).HasMaxLength(50);
         });
@@ -94,9 +111,14 @@ public partial class PMDbContext : DbContext
             entity.Property(e => e.Budzet).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.DatumKreiranja).HasColumnType("datetime");
             entity.Property(e => e.DatumPocetka).HasColumnType("datetime");
+            entity.Property(e => e.DatumPoslednjegBuilda).HasColumnType("datetime");
+            entity.Property(e => e.Engine).HasMaxLength(50);
+            entity.Property(e => e.FazaRazvoja).HasMaxLength(30);
             entity.Property(e => e.Naziv).HasMaxLength(50);
             entity.Property(e => e.Opis).HasMaxLength(150);
+            entity.Property(e => e.Platforma).HasMaxLength(100);
             entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.VerzijaIgre).HasMaxLength(20);
 
             entity.HasOne(d => d.Zanr).WithMany(p => p.Projektis)
                 .HasForeignKey(d => d.ZanrId)
@@ -116,10 +138,12 @@ public partial class PMDbContext : DbContext
 
             entity.HasOne(d => d.DodeljenKorisnikuNavigation).WithMany(p => p.Resursis)
                 .HasForeignKey(d => d.DodeljenKorisniku)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Resursi_Korisnici");
 
             entity.HasOne(d => d.Projekat).WithMany(p => p.Resursis)
                 .HasForeignKey(d => d.ProjekatId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Resursi_Projekti");
         });
 
@@ -133,6 +157,7 @@ public partial class PMDbContext : DbContext
             entity.Property(e => e.Opis).HasMaxLength(150);
             entity.Property(e => e.Prioritet).HasMaxLength(50);
             entity.Property(e => e.Status).HasMaxLength(50);
+            entity.Property(e => e.TipZadatka).HasMaxLength(30);
 
             entity.HasOne(d => d.DodeljenKorisniku).WithMany(p => p.ZadaciDodeljenKorisnikus)
                 .HasForeignKey(d => d.DodeljenKorisnikuId)
@@ -142,6 +167,10 @@ public partial class PMDbContext : DbContext
                 .HasForeignKey(d => d.KreiraoKorisnikId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Zadaci_Korisnici1");
+
+            entity.HasOne(d => d.Projekat).WithMany(p => p.Zadacis)
+                .HasForeignKey(d => d.ProjekatId)
+                .HasConstraintName("FK_Zadaci_Projekat");
         });
 
         modelBuilder.Entity<Zanrovi>(entity =>
