@@ -1,0 +1,90 @@
+.my-projects-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-header h1 {
+  margin: 0 0 8px;
+  color: #0f172a;
+}
+
+.page-header p {
+  margin: 0;
+  color: #64748b;
+}
+
+.error {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.empty-state {
+  background-color: white;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.project-card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.project-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.project-card-header h3 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.status {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.opis {
+  color: #475569;
+  margin: 0;
+}
+
+.project-info,
+.project-dates {
+  display: grid;
+  gap: 6px;
+}
+
+.project-info p,
+.project-dates p {
+  margin: 0;
+  color: #334155;
+}
+
+.project-card {
+  cursor: pointer;
+}
+
+.project-card:hover {
+  transform: translateY(-3px);
+  transition: 0.15s;
+}

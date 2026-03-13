@@ -1,0 +1,126 @@
+@if (projekat) {
+  <section class="project-details-page">
+
+    <div class="project-hero">
+      <div class="project-hero-left">
+        <div class="project-badge">Projekat</div>
+        <h1>{{ projekat.naziv }}</h1>
+        <p>{{ projekat.opis || 'Opis projekta nije dodat.' }}</p>
+      </div>
+
+      <div class="project-hero-right">
+        <span class="status">{{ projekat.status }}</span>
+      </div>
+    </div>
+
+    <div class="details-grid">
+
+      <div class="details-card">
+        <h3>Opšte informacije</h3>
+        <div class="details-list">
+          <div class="details-item">
+            <span class="label">Naziv projekta</span>
+            <span class="value">{{ projekat.naziv }}</span>
+          </div>
+
+          <div class="details-item">
+            <span class="label">Status</span>
+            <span class="value">{{ projekat.status }}</span>
+          </div>
+
+          <div class="details-item">
+            <span class="label">Budžet</span>
+            <span class="value">
+              {{ projekat.budzet !== null && projekat.budzet !== undefined ? (projekat.budzet + ' RSD') : 'Nije definisan' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-card">
+        <h3>Tehničke informacije</h3>
+        <div class="details-list">
+          <div class="details-item">
+            <span class="label">Verzija igre</span>
+            <span class="value">{{ projekat.verzijaIgre || 'N/A' }}</span>
+          </div>
+
+          <div class="details-item">
+            <span class="label">Engine</span>
+            <span class="value">{{ projekat.engine || 'N/A' }}</span>
+          </div>
+
+          <div class="details-item">
+            <span class="label">Platforma</span>
+            <span class="value">{{ projekat.platforma || 'N/A' }}</span>
+          </div>
+
+          <div class="details-item">
+            <span class="label">Faza razvoja</span>
+            <span class="value">{{ projekat.fazaRazvoja || 'N/A' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="details-card">
+        <h3>Datumi i praćenje</h3>
+        <div class="details-list">
+          <div class="details-item">
+            <span class="label">Datum početka</span>
+            <span class="value">{{ projekat.datumPocetka | date:'dd.MM.yyyy' }}</span>
+          </div>
+
+          <div class="details-item">
+            <span class="label">Rok</span>
+            <span class="value">{{ projekat.rok || 'Nije definisan' }}</span>
+          </div>
+
+          <div class="details-item">
+            <span class="label">Poslednji build</span>
+            <span class="value">
+              {{ projekat.datumPoslednjegBuilda ? (projekat.datumPoslednjegBuilda | date:'dd.MM.yyyy HH:mm') : 'Nema podataka' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="project-sections">
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>Buildovi</h2>
+          <button type="button">Pregled</button>
+        </div>
+        <p>Ovde će biti prikazana istorija buildova i patch verzija projekta.</p>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>Članovi projekta</h2>
+          <button type="button">Pregled</button>
+        </div>
+        <p>Ovde će biti prikazani članovi tima koji učestvuju na projektu.</p>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>Zadaci</h2>
+          <button type="button">Pregled</button>
+        </div>
+        <p>Ovde će biti prikazani zadaci povezani sa projektom.</p>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2>Resursi</h2>
+          <button type="button">Pregled</button>
+        </div>
+        <p>Ovde će biti prikazani resursi koji se koriste na projektu.</p>
+      </div>
+
+    </div>
+
+  </section>
+}

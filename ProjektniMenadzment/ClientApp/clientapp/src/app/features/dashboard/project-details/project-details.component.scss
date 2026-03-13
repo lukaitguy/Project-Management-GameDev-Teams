@@ -1,0 +1,139 @@
+.project-details-page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.project-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  background: linear-gradient(to right, #ffffff, #f8fafc);
+  border-radius: 18px;
+  padding: 24px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.project-hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.project-badge {
+  width: fit-content;
+  background-color: #dbeafe;
+  color: #1d4ed8;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.project-hero h1 {
+  margin: 0;
+  font-size: 32px;
+  color: #0f172a;
+}
+
+.project-hero p {
+  margin: 0;
+  color: #475569;
+  max-width: 700px;
+  line-height: 1.6;
+}
+
+.status {
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.details-card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.details-card h3 {
+  margin: 0 0 18px;
+  color: #0f172a;
+  font-size: 18px;
+}
+
+.details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.details-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.value {
+  font-size: 15px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.project-sections {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.section-card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #0f172a;
+}
+
+.section-header button {
+  border: none;
+  background-color: #2563eb;
+  color: white;
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.section-card p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}

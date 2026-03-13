@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using ProjektniMenadzment.Models.Domain;
 
-namespace ProjektniMenadzment.Models.Domain;
+namespace ProjektniMenadzment.Data;
 
 public partial class PMDbContext : DbContext
 {
@@ -119,6 +120,11 @@ public partial class PMDbContext : DbContext
             entity.Property(e => e.Platforma).HasMaxLength(100);
             entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.VerzijaIgre).HasMaxLength(20);
+
+            entity.HasOne(d => d.KreiraoKorisnik).WithMany(p => p.Projektis)
+                .HasForeignKey(d => d.KreiraoKorisnikId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Projekti_KreiraoKorisnik");
 
             entity.HasOne(d => d.Zanr).WithMany(p => p.Projektis)
                 .HasForeignKey(d => d.ZanrId)

@@ -39,6 +39,8 @@ public partial class Projekti
 
     public virtual ICollection<ClanoviProjektum> ClanoviProjekta { get; set; } = new List<ClanoviProjektum>();
 
+    public virtual Korisnici KreiraoKorisnik { get; set; } = null!;
+
     public virtual ICollection<Resursi> Resursis { get; set; } = new List<Resursi>();
 
     public virtual ICollection<Zadaci> Zadacis { get; set; } = new List<Zadaci>();

@@ -19,7 +19,7 @@ namespace ProjektniMenadzment.Repositories
         public async Task<Projekti> GetByIdAsync(Guid id)
         {
             return await _context.Projektis
-                .Include(p => p.KreiraoKorisnik)
+                //.Include(p => p.KreiraoKorisnik)
                 .Include(p => p.Zanr)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
@@ -48,7 +48,7 @@ namespace ProjektniMenadzment.Repositories
         public async Task<IEnumerable<Projekti>> GetAllAsync()
         {
             var projekti = await _context.Projektis
-                .Include(p=> p.KreiraoKorisnik)                
+                //.Include(p=> p.KreiraoKorisnik)                
                 .ToListAsync();
 
             return projekti;
@@ -57,7 +57,7 @@ namespace ProjektniMenadzment.Repositories
         public async Task<PregledProjektaViewModel?> GetDetailsByIdAsync(Guid projekatId)
         {
             var projekat = await _context.Projektis
-                .Include(p => p.KreiraoKorisnik)
+                //.Include(p => p.KreiraoKorisnik)
                 .Include(p => p.Zanr)
                 .FirstOrDefaultAsync(p => p.Id == projekatId);
 
@@ -88,7 +88,7 @@ namespace ProjektniMenadzment.Repositories
                 Budzet = projekat.Budzet ?? 0,
                 DatumPocetka = projekat.DatumPocetka,
                 Rok = projekat.Rok,
-                KreiraoKorisnikIme = $"{projekat.KreiraoKorisnik.Ime} {projekat.KreiraoKorisnik.Prezime}",
+                //KreiraoKorisnikIme = $"{projekat.KreiraoKorisnik.Ime} {projekat.KreiraoKorisnik.Prezime}",
 
                 Clanovi = clanovi.Select(cp => new ClanTimaViewModel
                 {
@@ -125,7 +125,7 @@ namespace ProjektniMenadzment.Repositories
             return await _context.ClanoviProjekta
                 .Where(cp => cp.KorisnikId == korisnikId)
                 .Include(cp => cp.Projekat)
-                    .ThenInclude(p => p.KreiraoKorisnik)
+                    //.ThenInclude(p => p.KreiraoKorisnik)
                 .Select(cp => cp.Projekat)                
                 .ToListAsync();
         }

@@ -10,6 +10,8 @@ import { HomeComponent as DashboardHomeComponent } from './features/dashboard/ho
 import { DashboardLayoutComponent } from './layout/dashboard-layout/dashboard-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { MyProjectsComponent } from './features/dashboard/my-projects/my-projects.component';
+import { ProjectDetailsComponent } from './features/dashboard/project-details/project-details.component';
 
 export const routes: Routes = [
     {
@@ -45,7 +47,9 @@ export const routes: Routes = [
         component: DashboardLayoutComponent,
         canActivate: [authGuard],
         children: [
-            { path: 'dashboard', component: DashboardHomeComponent }
+            { path: 'dashboard', component: DashboardHomeComponent },
+            { path: 'moji-projekti', component: MyProjectsComponent },
+            { path: 'projekti/:id', component: ProjectDetailsComponent }
         ]
     }
 ];

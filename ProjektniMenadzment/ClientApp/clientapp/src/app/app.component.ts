@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { TestService } from './core/services/test.service';
 import { AuthService } from './core/services/auth.service';
 
 @Component({
@@ -11,7 +10,6 @@ import { AuthService } from './core/services/auth.service';
 })
 export class AppComponent implements OnInit {
   title = 'clientapp';
-  message = '';
 
   constructor(private authService: AuthService) { }
 

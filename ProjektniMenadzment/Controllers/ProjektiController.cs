@@ -42,7 +42,7 @@ namespace ProjektniMenadzment.Controllers
                     Status = p.Status,
                     DatumPocetka = p.DatumPocetka,
                     Rok = p.Rok,
-                    KreiraoKorisnikIme = p.KreiraoKorisnik?.Ime ?? "Nepoznato"
+                    //KreiraoKorisnikIme = p.KreiraoKorisnik?.Ime ?? "Nepoznato"
                 }).ToList();
                 return View(viewModel);
             }
@@ -57,7 +57,7 @@ namespace ProjektniMenadzment.Controllers
                     Status = p.Status,
                     DatumPocetka = p.DatumPocetka,
                     Rok = p.Rok,
-                    KreiraoKorisnikIme = p.KreiraoKorisnik?.Ime ?? "Nepoznato"
+                    //KreiraoKorisnikIme = p.KreiraoKorisnik?.Ime ?? "Nepoznato"
                 }).ToList();
 
                 return View(viewModel);

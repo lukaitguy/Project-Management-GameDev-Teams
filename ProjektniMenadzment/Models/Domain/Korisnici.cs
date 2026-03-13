@@ -25,6 +25,8 @@ public partial class Korisnici
 
     public virtual ICollection<KomentariZadatak> KomentariZadataks { get; set; } = new List<KomentariZadatak>();
 
+    public virtual ICollection<Projekti> Projektis { get; set; } = new List<Projekti>();
+
     public virtual ICollection<Resursi> Resursis { get; set; } = new List<Resursi>();
 
     public virtual ICollection<Zadaci> ZadaciDodeljenKorisnikus { get; set; } = new List<Zadaci>();

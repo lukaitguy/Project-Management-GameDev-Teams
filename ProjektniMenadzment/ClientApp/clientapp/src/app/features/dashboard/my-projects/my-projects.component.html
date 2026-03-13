@@ -1,0 +1,49 @@
+<section class="my-projects-page">
+  <div class="page-header">
+    <h1>Moji projekti</h1>
+    <p>Pregled projekata u kojima učestvujete.</p>
+  </div>
+
+  @if (loading) {
+    <p>Učitavanje projekata...</p>
+  }
+
+  @if (greska) {
+    <p class="error">{{ greska }}</p>
+  }
+
+  @if (!loading && !greska && projekti.length === 0) {
+    <div class="empty-state">
+      <p>Trenutno nemate dodeljene projekte.</p>
+    </div>
+  }
+
+  @if (!loading && !greska && projekti.length > 0) {
+    <div class="projects-grid">
+      @for (projekat of projekti; track projekat.id) {
+        <div class="project-card" [routerLink]="['/projekti', projekat.id]">
+          <div class="project-card-header">
+            <h3>{{ projekat.naziv }}</h3>
+            <span class="status">{{ projekat.status }}</span>
+          </div>
+
+          <p class="opis">
+            {{ projekat.opis || 'Opis projekta nije dodat.' }}
+          </p>
+
+          <div class="project-info">
+            <p><strong>Verzija:</strong> {{ projekat.verzijaIgre || 'N/A' }}</p>
+            <p><strong>Engine:</strong> {{ projekat.engine || 'N/A' }}</p>
+            <p><strong>Platforma:</strong> {{ projekat.platforma || 'N/A' }}</p>
+            <p><strong>Faza razvoja:</strong> {{ projekat.fazaRazvoja || 'N/A' }}</p>
+          </div>
+
+          <div class="project-dates">
+            <p><strong>Početak:</strong> {{ projekat.datumPocetka | date:'dd.MM.yyyy' }}</p>
+            <p><strong>Rok:</strong> {{ projekat.rok ? projekat.rok : 'Nije definisan' }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

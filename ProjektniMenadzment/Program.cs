@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ProjektniMenadzment.Data;
+using ProjektniMenadzment.Models.Domain;
 using ProjektniMenadzment.Repositories;
 using ProjektniMenadzment.Repositories.Interfaces;
 
@@ -35,6 +36,7 @@ builder.Services.AddScoped<IClanoviProjektaRepository, ClanoviProjektaRepository
 builder.Services.AddScoped<IResursiRepository, ResursiRepository>();
 builder.Services.AddScoped<IAdminKorisniciRepository, AdminKorisniciRepository>();
 builder.Services.AddScoped<IZadaciKomentarRepository, ZadaciKomentarRepository>();
+builder.Services.AddScoped<IBuildoviRepository, BuildoviRepository>();
 
 var app = builder.Build();
 
