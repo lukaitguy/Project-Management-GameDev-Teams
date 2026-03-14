@@ -1,26 +1,32 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProjektiService } from '../../../core/services/projekti.service';
 import { ProjekatDetalji } from '../../../core/models/projekat-details.model';
+import { BuildoviService } from '../../../core/services/buildovi.service';
+import { Build } from '../../../core/models/build.model';
 
 @Component({
   selector: 'app-project-details',
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './project-details.component.html',
   styleUrl: './project-details.component.scss'
 })
 export class ProjectDetailsComponent implements OnInit {
 
   projekat?: ProjekatDetalji;
+  buildovi: Build[] = [];
+  poslednjiBuild?: Build;
+  loadingBuildovi = false;
+  greskaBuildovi = '';
 
   constructor(
     private route: ActivatedRoute,
-    private projektiService: ProjektiService
+    private projektiService: ProjektiService,
+    private buildoviService: BuildoviService
   ) {}
 
   ngOnInit(): void {
-
     const id = this.route.snapshot.paramMap.get('id');
 
     if (!id) return;
@@ -34,5 +40,26 @@ export class ProjectDetailsComponent implements OnInit {
       }
     });
 
+    this.ucitajBuildove(id);
+  }
+
+  ucitajBuildove(projekatId: string): void {
+    this.loadingBuildovi = true;
+    this.greskaBuildovi = '';
+
+    this.buildoviService.getByProjekatId(projekatId).subscribe({
+      next: (res) => {
+        this.buildovi = res;
+        this.poslednjiBuild = this.buildovi.length > 0 ? this.buildovi[0] : undefined;
+      },
+      error: (err) => {
+        console.error(err);
+        this.greskaBuildovi = 'Došlo je do greške pri učitavanju buildova.';
+        this.loadingBuildovi = false;
+      },
+      complete: () => {
+        this.loadingBuildovi = false;
+      }
+    });
   }
 }
