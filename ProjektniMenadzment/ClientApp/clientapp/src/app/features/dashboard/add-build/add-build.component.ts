@@ -37,8 +37,7 @@ export class AddBuildComponent implements OnInit {
       verzija: ['', [Validators.required]],
       nazivBuilda: [''],
       tipBuilda: [''],
-      patchNapomene: [''],
-      datumBuilda: ['']
+      patchNapomene: ['']
     });
   }
 

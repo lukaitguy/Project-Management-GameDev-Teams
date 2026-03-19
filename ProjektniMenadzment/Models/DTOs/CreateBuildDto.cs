@@ -6,7 +6,6 @@
         public string? NazivBuilda { get; set; }
         public string? TipBuilda { get; set; }
         public string? PatchNapomene { get; set; }
-        public DateTime? DatumBuilda { get; set; }
         public Guid ProjekatId { get; set; }
 
     }

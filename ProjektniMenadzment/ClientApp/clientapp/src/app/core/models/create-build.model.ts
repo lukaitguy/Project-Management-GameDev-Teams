@@ -3,6 +3,5 @@ export interface CreateBuild {
   nazivBuilda?: string | null;
   tipBuilda?: string | null;
   patchNapomene?: string | null;
-  datumBuilda?: string | null;
   projekatId: string;
 }

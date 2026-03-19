@@ -52,7 +52,7 @@ namespace ProjektniMenadzment.Controllers.Api
                 NazivBuilda = dto.NazivBuilda,
                 TipBuilda = dto.TipBuilda,
                 PatchNapomene = dto.PatchNapomene,
-                DatumBuilda = dto.DatumBuilda ?? DateTime.Now,
+                DatumBuilda = DateTime.UtcNow,
                 ProjekatId = dto.ProjekatId
             };
 
