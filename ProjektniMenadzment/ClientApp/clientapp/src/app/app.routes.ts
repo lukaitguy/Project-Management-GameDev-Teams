@@ -14,6 +14,8 @@ import { MyProjectsComponent } from './features/dashboard/my-projects/my-project
 import { ProjectDetailsComponent } from './features/dashboard/project-details/project-details.component';
 import { ProjectBuildsComponent } from './features/dashboard/project-builds/project-builds.component';
 import { AddBuildComponent } from './features/dashboard/add-build/add-build.component';
+import { AddProjectComponent } from './features/dashboard/add-project/add-project.component';
+import { EditProjectComponent } from './features/dashboard/edit-project/edit-project.component';
 
 export const routes: Routes = [
     {
@@ -53,7 +55,9 @@ export const routes: Routes = [
             { path: 'moji-projekti', component: MyProjectsComponent },
             { path: 'projekti/:id', component: ProjectDetailsComponent },
             { path: 'projekti/:id/buildovi', component: ProjectBuildsComponent },
-            { path: 'projekti/:id/buildovi/novi', component: AddBuildComponent }
+            { path: 'projekti/:id/buildovi/novi', component: AddBuildComponent },
+            { path: 'admin/projekti/novi', component: AddProjectComponent },
+            { path: 'admin/projekti/:id/izmena', component: EditProjectComponent }
         ]
     }
 ];

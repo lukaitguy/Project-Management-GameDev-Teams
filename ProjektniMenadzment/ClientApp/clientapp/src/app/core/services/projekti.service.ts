@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Projekat } from '../models/projekat.model';
-import { ProjekatDetalji } from '../models/projekat-details.model';
+import { ProjekatDetails } from '../models/projekat-details.model';
 import { CreateProjekat } from '../models/create-projekat.model';
 
 @Injectable({
@@ -17,7 +17,7 @@ export class ProjektiService {
   }
 
   getProjekat(id: string) {
-  return this.http.get<ProjekatDetalji>(`/api/projekti/${id}`);
+  return this.http.get<ProjekatDetails>(`/api/projekti/${id}`);
   }
 
   create(projekat: CreateProjekat){

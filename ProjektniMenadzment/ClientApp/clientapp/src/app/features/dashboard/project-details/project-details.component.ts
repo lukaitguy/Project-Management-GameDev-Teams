@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ProjektiService } from '../../../core/services/projekti.service';
-import { ProjekatDetalji } from '../../../core/models/projekat-details.model';
+import { ProjekatDetails } from '../../../core/models/projekat-details.model';
 import { BuildoviService } from '../../../core/services/buildovi.service';
 import { Build } from '../../../core/models/build.model';
 
@@ -14,7 +14,7 @@ import { Build } from '../../../core/models/build.model';
 })
 export class ProjectDetailsComponent implements OnInit {
 
-  projekat?: ProjekatDetalji;
+  projekat?: ProjekatDetails;
   buildovi: Build[] = [];
   poslednjiBuild?: Build;
   loadingBuildovi = false;

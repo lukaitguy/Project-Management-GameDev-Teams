@@ -1,1 +1,88 @@
-<p>add-project works!</p>
+<section class="project-form-page">
+  <div class="page-header">
+    <div>
+      <h1>Novi projekat</h1>
+      <p>Kreiranje novog projekta za razvoj video igre.</p>
+    </div>
+
+    <a class="back-link" routerLink="/moji-projekti">Nazad</a>
+  </div>
+
+  <div class="form-card">
+    <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" class="project-form">
+
+      <div class="form-group">
+        <label for="naziv">Naziv projekta</label>
+        <input id="naziv" type="text" formControlName="naziv" />
+      </div>
+
+      <div class="form-group">
+        <label for="opis">Opis</label>
+        <textarea id="opis" rows="4" formControlName="opis"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="status">Status</label>
+          <input id="status" type="text" formControlName="status" />
+        </div>
+
+        <div class="form-group">
+          <label for="budzet">Budžet</label>
+          <input id="budzet" type="number" formControlName="budzet" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="datumPocetka">Datum početka</label>
+          <input id="datumPocetka" type="date" formControlName="datumPocetka" />
+        </div>
+
+        <div class="form-group">
+          <label for="rok">Rok</label>
+          <input id="rok" type="date" formControlName="rok" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="verzijaIgre">Verzija igre</label>
+          <input id="verzijaIgre" type="text" formControlName="verzijaIgre" />
+        </div>
+
+        <div class="form-group">
+          <label for="engine">Engine</label>
+          <input id="engine" type="text" formControlName="engine" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="platforma">Platforma</label>
+          <input id="platforma" type="text" formControlName="platforma" />
+        </div>
+
+        <div class="form-group">
+          <label for="fazaRazvoja">Faza razvoja</label>
+          <input id="fazaRazvoja" type="text" formControlName="fazaRazvoja" />
+        </div>
+      </div>
+
+      @if (greska) {
+        <p class="error-text">{{ greska }}</p>
+      }
+
+      @if (uspeh) {
+        <p class="success-text">{{ uspeh }}</p>
+      }
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="loading">
+          {{ loading ? 'Čuvanje...' : 'Sačuvaj projekat' }}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</section>

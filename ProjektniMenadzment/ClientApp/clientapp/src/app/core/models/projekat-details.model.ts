@@ -1,4 +1,4 @@
-export interface ProjekatDetalji {
+export interface ProjekatDetails {
   id: string;
   naziv: string;
   opis?: string | null;
