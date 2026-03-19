@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Projekat } from '../models/projekat.model';
 import { ProjekatDetalji } from '../models/projekat-details.model';
+import { CreateProjekat } from '../models/create-projekat.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,5 +18,13 @@ export class ProjektiService {
 
   getProjekat(id: string) {
   return this.http.get<ProjekatDetalji>(`/api/projekti/${id}`);
-}
+  }
+
+  create(projekat: CreateProjekat){
+    return this.http.post('/api/projekti', projekat);
+  }
+
+  update(id: string, projekat: CreateProjekat){
+    return this.http.put(`/api/projekti/${id}`, projekat);
+  }
 }
