@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using ProjektniMenadzment.Models.Domain;
 using ProjektniMenadzment.Models.DTOs;
 using ProjektniMenadzment.Repositories.Interfaces;
 
@@ -89,6 +91,90 @@ namespace ProjektniMenadzment.Controllers.Api
             };
 
             return Ok(dto);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Create([FromBody] CreateProjekatDto projekat)
+        {
+            if (string.IsNullOrWhiteSpace(projekat.Naziv))
+            {
+                return BadRequest(new { message = "Naziv projekta je obavezan." });
+            }
+
+            if (string.IsNullOrWhiteSpace(projekat.Status))
+            {
+                return BadRequest(new { message = "Status projekta je obavezan." });
+            }
+
+            var identityUser = await _userManager.GetUserAsync(User);
+
+            if(identityUser == null)
+            {
+                return Unauthorized(new { message = "Korisnik nije prijavljen." });
+            }
+
+            var korisnik = await _korisniciRepository.GetByIdentityUserIdAsync(identityUser.Id);
+
+            if(korisnik == null)
+            {
+                return NotFound(new { message = "Korisnik ne postoji u aplikacionoj bazi." });
+            }
+
+            var noviProjekat = new Projekti
+            {
+                Id = Guid.NewGuid(),
+                Naziv = projekat.Naziv,
+                Opis = projekat.Opis,
+                Status = projekat.Status,
+                Budzet = projekat.Budzet,
+                DatumPocetka = projekat.DatumPocetka,
+                Rok = projekat.Rok,
+                ZanrId = projekat.ZanrId,
+                VerzijaIgre = projekat.VerzijaIgre,
+                Engine = projekat.Engine,
+                Platforma = projekat.Platforma,
+                FazaRazvoja = projekat.FazaRazvoja,
+                DatumKreiranja = DateTime.UtcNow,
+                KreiraoKorisnikId = korisnik.Id
+            };
+
+            var rez = await _projektiRepository.AddAsync(noviProjekat);
+
+            return Ok(new { message = "Projekat uspešno kreiran.", id = rez.Id });
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProjekatDto projekat)
+        {
+            var postojeciProjekat = await _projektiRepository.GetByIdAsync(id);
+
+            if (postojeciProjekat == null)
+            {
+                return NotFound(new { message = "Projekat nije pronađen." });
+            }
+
+            postojeciProjekat.Naziv = projekat.Naziv;
+            postojeciProjekat.Opis = projekat.Opis;
+            postojeciProjekat.Status = projekat.Status;
+            postojeciProjekat.Budzet = projekat.Budzet;
+            postojeciProjekat.DatumPocetka = projekat.DatumPocetka;
+            postojeciProjekat.Rok = projekat.Rok;
+            postojeciProjekat.ZanrId = projekat.ZanrId;
+            postojeciProjekat.VerzijaIgre = projekat.VerzijaIgre;
+            postojeciProjekat.Engine = projekat.Engine;
+            postojeciProjekat.Platforma = projekat.Platforma;
+            postojeciProjekat.FazaRazvoja = projekat.FazaRazvoja;
+
+            var rezultat = await _projektiRepository.UpdateAsync(postojeciProjekat);
+
+            if (rezultat == null)
+            {
+                return BadRequest(new { message = "Izmena projekta nije uspela." });
+            }
+
+            return Ok(new { message = "Projekat je uspešno izmenjen." });
         }
 
     }
