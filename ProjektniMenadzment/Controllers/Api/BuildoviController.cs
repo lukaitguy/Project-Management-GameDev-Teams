@@ -36,5 +36,33 @@ namespace ProjektniMenadzment.Controllers.Api
 
             return Ok(rezultat);
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateBuildDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Verzija))
+            {
+                return BadRequest(new { message = "Verzija builda je obavezna." });
+            }
+
+            var build = new Models.Domain.Buildovi
+            {
+                Id = Guid.NewGuid(),
+                Verzija = dto.Verzija,
+                NazivBuilda = dto.NazivBuilda,
+                TipBuilda = dto.TipBuilda,
+                PatchNapomene = dto.PatchNapomene,
+                DatumBuilda = dto.DatumBuilda ?? DateTime.Now,
+                ProjekatId = dto.ProjekatId
+            };
+
+            var rezultat = await _buildoviRepository.CreateAsync(build);
+
+            return Ok(new
+            {
+                message = "Build je uspešno dodat.",
+                id = rezultat.Id
+            });
+        }
     }
 }

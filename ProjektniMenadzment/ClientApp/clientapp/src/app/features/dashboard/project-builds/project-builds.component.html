@@ -1,0 +1,87 @@
+<section class="project-builds-page">
+
+<div class="page-header">
+  <div>
+    <h1>Svi buildovi projekta</h1>
+    <p>Pregled svih verzija i patch buildova povezanih sa projektom.</p>
+  </div>
+
+  <div class="header-actions">
+    <a class="new-link" [routerLink]="['/projekti', projekatId, 'buildovi', 'novi']">
+      Novi build
+    </a>
+
+    <a class="back-link" [routerLink]="['/projekti', projekatId]">
+      Nazad na projekat
+    </a>
+  </div>
+</div>
+
+  @if (loading) {
+    <p>Učitavanje buildova...</p>
+  }
+
+  @if (greska) {
+    <p class="error-text">{{ greska }}</p>
+  }
+
+  @if (!loading && !greska && buildovi.length === 0) {
+    <div class="empty-state">
+      <p>Ovaj projekat trenutno nema evidentirane buildove.</p>
+    </div>
+  }
+
+  @if (!loading && !greska && pagedBuildovi.length > 0) {
+    <div class="build-list">
+      @for (build of pagedBuildovi; track build.id) {
+        <div class="build-card">
+          <div class="build-card-header">
+            <div>
+              <h3>{{ build.verzija }}</h3>
+              <p class="build-name">{{ build.nazivBuilda || 'Bez naziva builda' }}</p>
+            </div>
+
+            <span class="build-type">
+              {{ build.tipBuilda || 'N/A' }}
+            </span>
+          </div>
+
+          <div class="build-meta">
+            <p>
+              <strong>Datum builda:</strong>
+              {{ build.datumBuilda ? (build.datumBuilda | date:'dd.MM.yyyy HH:mm') : 'Nije definisan' }}
+            </p>
+          </div>
+
+          <div class="build-notes">
+            <strong>Patch napomene:</strong>
+            <p>{{ build.patchNapomene || 'Nema patch napomena.' }}</p>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <button (click)="prethodnaStranica()" [disabled]="currentPage === 1">
+          Prethodna
+        </button>
+
+        <div class="page-numbers">
+          @for (page of pageNumbers; track page) {
+            <button
+              [class.active]="page === currentPage"
+              (click)="prikaziStranicu(page)">
+              {{ page }}
+            </button>
+          }
+        </div>
+
+        <button (click)="sledecaStranica()" [disabled]="currentPage === totalPages">
+          Sledeća
+        </button>
+      </div>
+    }
+  }
+
+</section>

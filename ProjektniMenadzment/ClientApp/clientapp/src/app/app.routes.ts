@@ -12,6 +12,8 @@ import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { MyProjectsComponent } from './features/dashboard/my-projects/my-projects.component';
 import { ProjectDetailsComponent } from './features/dashboard/project-details/project-details.component';
+import { ProjectBuildsComponent } from './features/dashboard/project-builds/project-builds.component';
+import { AddBuildComponent } from './features/dashboard/add-build/add-build.component';
 
 export const routes: Routes = [
     {
@@ -49,7 +51,9 @@ export const routes: Routes = [
         children: [
             { path: 'dashboard', component: DashboardHomeComponent },
             { path: 'moji-projekti', component: MyProjectsComponent },
-            { path: 'projekti/:id', component: ProjectDetailsComponent }
+            { path: 'projekti/:id', component: ProjectDetailsComponent },
+            { path: 'projekti/:id/buildovi', component: ProjectBuildsComponent },
+            { path: 'projekti/:id/buildovi/novi', component: AddBuildComponent }
         ]
     }
 ];
