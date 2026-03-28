@@ -7,6 +7,7 @@ The upgrades in this project will include:
 - API Controllers
 - Service layer
 - Modified and extended database
+
 This README summarizes the technology stack, architecture, features, and provides an ER diagram of the underlying database.
 
 ## 📌 Overview
