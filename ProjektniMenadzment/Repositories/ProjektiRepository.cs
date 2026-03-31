@@ -19,8 +19,6 @@ namespace ProjektniMenadzment.Repositories
         public async Task<Projekti> GetByIdAsync(Guid id)
         {
             return await _context.Projektis
-                //.Include(p => p.KreiraoKorisnik)
-                .Include(p => p.Zanr)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -58,7 +56,7 @@ namespace ProjektniMenadzment.Repositories
         {
             var projekat = await _context.Projektis
                 //.Include(p => p.KreiraoKorisnik)
-                .Include(p => p.Zanr)
+                //.Include(p => p.Zanr)
                 .FirstOrDefaultAsync(p => p.Id == projekatId);
 
             if (projekat == null)
@@ -83,7 +81,7 @@ namespace ProjektniMenadzment.Repositories
                 Id = projekat.Id,
                 Naziv = projekat.Naziv,
                 Opis = projekat.Opis ?? "Ovaj projekat nema opis.",
-                Zanr = projekat.Zanr?.Naziv ?? "Ovaj projekat nema definisan zanr igre.",
+                //Zanr = projekat.Zanr?.Naziv ?? "Ovaj projekat nema definisan zanr igre.",
                 Status = projekat.Status,
                 Budzet = projekat.Budzet ?? 0,
                 DatumPocetka = projekat.DatumPocetka,
@@ -124,9 +122,7 @@ namespace ProjektniMenadzment.Repositories
         {
             return await _context.ClanoviProjekta
                 .Where(cp => cp.KorisnikId == korisnikId)
-                .Include(cp => cp.Projekat)
-                    //.ThenInclude(p => p.KreiraoKorisnik)
-                .Select(cp => cp.Projekat)                
+                .Select(cp => cp.Projekat)
                 .ToListAsync();
         }
 
@@ -145,7 +141,7 @@ namespace ProjektniMenadzment.Repositories
             postojeciProjekat.Budzet = projekat.Budzet;
             postojeciProjekat.DatumPocetka = projekat.DatumPocetka;
             postojeciProjekat.Rok = projekat.Rok;
-            postojeciProjekat.ZanrId = projekat.ZanrId;
+            //postojeciProjekat.ZanrId = projekat.ZanrId;
 
             await _context.SaveChangesAsync();
             return postojeciProjekat;

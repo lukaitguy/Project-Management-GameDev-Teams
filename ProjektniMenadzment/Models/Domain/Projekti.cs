@@ -21,8 +21,6 @@ public partial class Projekti
 
     public Guid KreiraoKorisnikId { get; set; }
 
-    public Guid? ZanrId { get; set; }
-
     public DateTime DatumKreiranja { get; set; }
 
     public string? VerzijaIgre { get; set; }
@@ -45,5 +43,5 @@ public partial class Projekti
 
     public virtual ICollection<Zadaci> Zadacis { get; set; } = new List<Zadaci>();
 
-    public virtual Zanrovi? Zanr { get; set; }
+    public virtual ICollection<Zanrovi> Zanrs { get; set; } = new List<Zanrovi>();
 }

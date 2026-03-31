@@ -79,7 +79,7 @@ namespace ProjektniMenadzment.Controllers
             return View(model);
         }
 
-        [Authorize(Roles = "Admin, ProjektniMenadzer")]
+        [Authorize(Roles = "Administrator, ProjektniMenadzer")]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -126,7 +126,6 @@ namespace ProjektniMenadzment.Controllers
                 Budzet = model.Budzet,
                 DatumPocetka = model.DatumPocetka,
                 Rok = model.Rok,
-                ZanrId = model.ZanrId,
                 KreiraoKorisnikId = korisnik.Id,
                 DatumKreiranja = DateTime.Now,
             };
@@ -135,7 +134,7 @@ namespace ProjektniMenadzment.Controllers
             return RedirectToAction("Index");
         }
 
-        [Authorize(Roles = "Admin, ProjektniMenadzer")]
+        [Authorize(Roles = "Administrator, ProjektniMenadzer")]
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
         {
@@ -153,14 +152,7 @@ namespace ProjektniMenadzment.Controllers
                 Status = projekat.Status,
                 Budzet = projekat.Budzet ?? 0,
                 DatumPocetka = projekat.DatumPocetka,
-                Rok = projekat.Rok,
-                ZanrId = projekat.ZanrId,
-                Zanrovi = zanrovi.Select(z => new SelectListItem
-                {
-                    Value = z.Id.ToString(),
-                    Text = z.Naziv,
-                    Selected = z.Id == projekat.ZanrId
-                }).ToList(),
+                Rok = projekat.Rok
             };
 
             return View(model);
@@ -191,7 +183,6 @@ namespace ProjektniMenadzment.Controllers
                 Budzet = model.Budzet,
                 DatumPocetka = model.DatumPocetka,
                 Rok = model.Rok,
-                ZanrId = model.ZanrId
             };
 
             await _projektiRepository.UpdateAsync(projekat);

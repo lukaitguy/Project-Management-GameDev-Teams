@@ -126,9 +126,20 @@ public partial class PMDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Projekti_KreiraoKorisnik");
 
-            entity.HasOne(d => d.Zanr).WithMany(p => p.Projektis)
-                .HasForeignKey(d => d.ZanrId)
-                .HasConstraintName("FK_Projekti_Zanrovi");
+            entity.HasMany(d => d.Zanrs).WithMany(p => p.Projekats)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ProjektiZanrovi",
+                    r => r.HasOne<Zanrovi>().WithMany()
+                        .HasForeignKey("ZanrId")
+                        .HasConstraintName("FK_ProjektiZanrovi_Zanrovi"),
+                    l => l.HasOne<Projekti>().WithMany()
+                        .HasForeignKey("ProjekatId")
+                        .HasConstraintName("FK_ProjektiZanrovi_Projekti"),
+                    j =>
+                    {
+                        j.HasKey("ProjekatId", "ZanrId");
+                        j.ToTable("ProjektiZanrovi");
+                    });
         });
 
         modelBuilder.Entity<Resursi>(entity =>
@@ -182,6 +193,8 @@ public partial class PMDbContext : DbContext
         modelBuilder.Entity<Zanrovi>(entity =>
         {
             entity.ToTable("Zanrovi");
+
+            entity.HasIndex(e => e.Naziv, "UQ_Zanrovi_Naziv").IsUnique();
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Naziv).HasMaxLength(50);

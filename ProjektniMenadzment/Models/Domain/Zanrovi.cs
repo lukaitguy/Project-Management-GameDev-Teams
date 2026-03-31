@@ -9,5 +9,5 @@ public partial class Zanrovi
 
     public string Naziv { get; set; } = null!;
 
-    public virtual ICollection<Projekti> Projektis { get; set; } = new List<Projekti>();
+    public virtual ICollection<Projekti> Projekats { get; set; } = new List<Projekti>();
 }

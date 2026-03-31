@@ -4,6 +4,8 @@ using ProjektniMenadzment.Data;
 using ProjektniMenadzment.Models.Domain;
 using ProjektniMenadzment.Repositories;
 using ProjektniMenadzment.Repositories.Interfaces;
+using ProjektniMenadzment.Services;
+using ProjektniMenadzment.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +39,10 @@ builder.Services.AddScoped<IResursiRepository, ResursiRepository>();
 builder.Services.AddScoped<IAdminKorisniciRepository, AdminKorisniciRepository>();
 builder.Services.AddScoped<IZadaciKomentarRepository, ZadaciKomentarRepository>();
 builder.Services.AddScoped<IBuildoviRepository, BuildoviRepository>();
+
+
+builder.Services.AddScoped<IProjektiService, ProjektiService>();
+builder.Services.AddScoped<IZanroviService, ZanroviService>();
 
 var app = builder.Build();
 

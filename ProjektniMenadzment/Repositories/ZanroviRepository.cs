@@ -15,7 +15,9 @@ namespace ProjektniMenadzment.Repositories
         }
         public async Task<IEnumerable<Zanrovi>> GetAllAsync()
         {
-            return await _context.Zanrovis.ToListAsync();
+            return await _context.Zanrovis
+                .OrderBy(z => z.Naziv)
+                .ToListAsync();
         }
     }
 }
