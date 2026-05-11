@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using ProjektniMenadzment.Models.Domain;
 using ProjektniMenadzment.Models.DTOs;
-using ProjektniMenadzment.Repositories.Interfaces;
 using ProjektniMenadzment.Services.Interfaces;
 
 namespace ProjektniMenadzment.Controllers.Api
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProjektiController : ControllerBase
@@ -29,54 +27,93 @@ namespace ProjektniMenadzment.Controllers.Api
         {
             var identityUser = await _userManager.GetUserAsync(User);
 
-            if(identityUser == null)
+            if (identityUser == null)
             {
                 return Unauthorized(new { message = "Korisnik nije prijavljen." });
             }
 
-            var result = await _projektiService.GetMojiProjektiAsync(identityUser.Id);
+            var result = User.IsInRole("Administrator")
+                ? await _projektiService.GetAllAsync()
+                : await _projektiService.GetMojiProjektiAsync(identityUser.Id);
 
             if (!result.Success)
             {
                 return NotFound(new { message = result.Message });
             }
+
             return Ok(result.Data);
-            
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProjekatById(Guid id)
         {
-            var projekat = _projektiService.GetByIdAsync(id);
+            var projekat = await _projektiService.GetByIdAsync(id);
 
-            if (!projekat.Result.Success)
+            if (!projekat.Success)
             {
                 return NotFound(new { message = "Projekat nije pronadjen." });
             }
 
-            return Ok(projekat.Result.Data);
+            return Ok(projekat.Data);
         }
 
         [HttpPost]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create([FromBody] CreateProjekatDto projekat)
         {
-            var result = await _projektiService.CreateAsync(projekat);
+            var identityUser = await _userManager.GetUserAsync(User);
+
+            if (identityUser == null)
+            {
+                return Unauthorized(new { message = "Korisnik nije prijavljen." });
+            }
+
+            var result = await _projektiService.CreateAsync(projekat, identityUser.Id);
 
             if (!result.Success)
             {
                 return BadRequest(new { message = result.Message });
             }
+
             return Ok(new { id = result.Data });
-             
         }
 
         [HttpPut("{id}")]
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProjekatDto projekat)
         {
-            throw new NotImplementedException();
+            var result = await _projektiService.UpdateAsync(id, projekat);
+
+            if (!result.Success)
+            {
+                return HandleProjectMutationFailure(result.Message);
+            }
+
+            return NoContent();
         }
 
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await _projektiService.DeleteAsync(id);
+
+            if (!result.Success)
+            {
+                return HandleProjectMutationFailure(result.Message);
+            }
+
+            return NoContent();
+        }
+
+        private IActionResult HandleProjectMutationFailure(string? message)
+        {
+            if (string.Equals(message, "Projekat nije pronadjen.", StringComparison.Ordinal))
+            {
+                return NotFound(new { message });
+            }
+
+            return BadRequest(new { message = message ?? "Doslo je do greske pri obradi projekta." });
+        }
     }
 }

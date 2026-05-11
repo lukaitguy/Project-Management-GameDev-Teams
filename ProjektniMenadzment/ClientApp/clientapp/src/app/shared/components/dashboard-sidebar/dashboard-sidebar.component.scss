@@ -67,6 +67,17 @@
   color: white;
 }
 
+.sidebar-nav a.admin-link {
+  background-color: rgba(245, 158, 11, 0.16);
+  color: #fde68a;
+}
+
+.sidebar-nav a.admin-link:hover,
+.sidebar-nav a.admin-link.active {
+  background-color: #f59e0b;
+  color: #0f172a;
+}
+
 /* Donji deo */
 
 .sidebar-bottom {

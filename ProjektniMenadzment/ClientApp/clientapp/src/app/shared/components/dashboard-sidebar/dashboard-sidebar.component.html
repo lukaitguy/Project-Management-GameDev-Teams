@@ -24,6 +24,12 @@
         Moji projekti
       </a>
 
+      @if (korisnik?.isAdmin) {
+        <a routerLink="/admin/projekti/novi" routerLinkActive="active" class="admin-link">
+          Novi projekat
+        </a>
+      }
+
       <a routerLink="/zadaci" routerLinkActive="active">
         Zadaci
       </a>

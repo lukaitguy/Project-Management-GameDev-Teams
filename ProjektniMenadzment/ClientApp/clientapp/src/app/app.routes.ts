@@ -10,6 +10,7 @@ import { HomeComponent as DashboardHomeComponent } from './features/dashboard/ho
 import { DashboardLayoutComponent } from './layout/dashboard-layout/dashboard-layout.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { adminGuard } from './core/guards/admin.guard';
 import { MyProjectsComponent } from './features/dashboard/my-projects/my-projects.component';
 import { ProjectDetailsComponent } from './features/dashboard/project-details/project-details.component';
 import { ProjectBuildsComponent } from './features/dashboard/project-builds/project-builds.component';
@@ -56,8 +57,8 @@ export const routes: Routes = [
             { path: 'projekti/:id', component: ProjectDetailsComponent },
             { path: 'projekti/:id/buildovi', component: ProjectBuildsComponent },
             { path: 'projekti/:id/buildovi/novi', component: AddBuildComponent },
-            { path: 'admin/projekti/novi', component: AddProjectComponent },
-            { path: 'admin/projekti/:id/izmena', component: EditProjectComponent }
+            { path: 'admin/projekti/novi', component: AddProjectComponent, canActivate: [adminGuard] },
+            { path: 'admin/projekti/:id/izmena', component: EditProjectComponent, canActivate: [adminGuard] }
         ]
     }
 ];

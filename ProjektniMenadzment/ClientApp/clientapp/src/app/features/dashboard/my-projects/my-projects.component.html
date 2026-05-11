@@ -1,20 +1,32 @@
 <section class="my-projects-page">
   <div class="page-header">
-    <h1>Moji projekti</h1>
-    <p>Pregled projekata u kojima učestvujete.</p>
+    <div>
+      <h1>{{ isAdmin ? 'Svi projekti' : 'Moji projekti' }}</h1>
+      <p>
+        {{ isAdmin ? 'Administratorski pregled svih projekata u sistemu.' : 'Pregled projekata u kojima ucestvujete.' }}
+      </p>
+    </div>
+
+    @if (isAdmin) {
+      <a class="create-link" routerLink="/admin/projekti/novi">Novi projekat</a>
+    }
   </div>
 
   @if (loading) {
-    <p>Učitavanje projekata...</p>
+    <p>Ucitavanje projekata...</p>
   }
 
   @if (greska) {
     <p class="error">{{ greska }}</p>
   }
 
+  @if (uspeh) {
+    <p class="success">{{ uspeh }}</p>
+  }
+
   @if (!loading && !greska && projekti.length === 0) {
     <div class="empty-state">
-      <p>Trenutno nemate dodeljene projekte.</p>
+      <p>{{ isAdmin ? 'Trenutno nema kreiranih projekata.' : 'Trenutno nemate dodeljene projekte.' }}</p>
     </div>
   }
 
@@ -23,7 +35,11 @@
       @for (projekat of projekti; track projekat.id) {
         <div class="project-card" [routerLink]="['/projekti', projekat.id]">
           <div class="project-card-header">
-            <h3>{{ projekat.naziv }}</h3>
+            <div>
+              <h3>{{ projekat.naziv }}</h3>
+              <p class="project-subtitle">{{ projekat.fazaRazvoja || 'Faza razvoja nije definisana.' }}</p>
+            </div>
+
             <span class="status">{{ projekat.status }}</span>
           </div>
 
@@ -35,13 +51,20 @@
             <p><strong>Verzija:</strong> {{ projekat.verzijaIgre || 'N/A' }}</p>
             <p><strong>Engine:</strong> {{ projekat.engine || 'N/A' }}</p>
             <p><strong>Platforma:</strong> {{ projekat.platforma || 'N/A' }}</p>
-            <p><strong>Faza razvoja:</strong> {{ projekat.fazaRazvoja || 'N/A' }}</p>
+            <p><strong>Poslednji build:</strong> {{ projekat.datumPoslednjegBuilda ? (projekat.datumPoslednjegBuilda | date:'dd.MM.yyyy HH:mm') : 'Nema podataka' }}</p>
           </div>
 
           <div class="project-dates">
-            <p><strong>Početak:</strong> {{ projekat.datumPocetka | date:'dd.MM.yyyy' }}</p>
-            <p><strong>Rok:</strong> {{ projekat.rok ? projekat.rok : 'Nije definisan' }}</p>
+            <p><strong>Pocetak:</strong> {{ projekat.datumPocetka | date:'dd.MM.yyyy' }}</p>
+            <p><strong>Rok:</strong> {{ projekat.rok ? (projekat.rok | date:'dd.MM.yyyy') : 'Nije definisan' }}</p>
           </div>
+
+          @if (isAdmin) {
+            <div class="project-actions" (click)="$event.stopPropagation()">
+              <a class="edit-link" [routerLink]="['/admin/projekti', projekat.id, 'izmena']">Izmeni</a>
+              <button type="button" class="delete-btn" (click)="obrisiProjekat($event, projekat.id)">Obrisi</button>
+            </div>
+          }
         </div>
       }
     </div>

@@ -16,15 +16,19 @@ export class ProjektiService {
     return this.http.get<Projekat[]>('/api/projekti/moji');
   }
 
-  getProjekat(id: string) {
-  return this.http.get<ProjekatDetails>(`/api/projekti/${id}`);
+  getProjekat(id: string): Observable<ProjekatDetails> {
+    return this.http.get<ProjekatDetails>(`/api/projekti/${id}`);
   }
 
-  create(projekat: CreateProjekat){
-    return this.http.post('/api/projekti', projekat);
+  create(projekat: CreateProjekat): Observable<{ id: string }> {
+    return this.http.post<{ id: string }>('/api/projekti', projekat);
   }
 
-  update(id: string, projekat: CreateProjekat){
-    return this.http.put(`/api/projekti/${id}`, projekat);
+  update(id: string, projekat: CreateProjekat): Observable<void> {
+    return this.http.put<void>(`/api/projekti/${id}`, projekat);
+  }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`/api/projekti/${id}`);
   }
 }

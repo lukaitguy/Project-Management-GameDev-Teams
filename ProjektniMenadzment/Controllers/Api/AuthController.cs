@@ -137,7 +137,9 @@ namespace ProjektniMenadzment.Controllers.Api
 
             return Ok(new
             {
-                korisnickoIme = User.Identity!.Name
+                korisnickoIme = User.Identity!.Name,
+                isAdmin = User.IsInRole("Administrator"),
+                isPM = User.IsInRole("ProjektniMenadzer")
             });
         }
 

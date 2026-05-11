@@ -1,21 +1,104 @@
 <section class="dashboard-home">
-  <h1>Dashboard korisnika</h1>
-  <p>Dobrodošli na vaš korisnički panel.</p>
-
-  <div class="dashboard-cards">
-    <div class="card">
-      <h3>Moji projekti</h3>
-      <p>Pregled svih projekata u kojima učestvujete.</p>
+  <div class="hero-card">
+    <div class="hero-copy">
+      <span class="eyebrow">{{ isAdmin ? 'Administratorski pregled' : 'Licni pregled rada' }}</span>
+      <h1>Zdravo, {{ korisnickoIme }}</h1>
+      <p>
+        Ovde imas brz pregled projekata, rokova i aktivnosti koje trenutno najvise traze paznju.
+      </p>
     </div>
 
-    <div class="card">
-      <h3>Zadaci</h3>
-      <p>Pratite zadatke koji su vam dodeljeni.</p>
-    </div>
+    <div class="hero-actions">
+      <a class="primary-action" routerLink="/moji-projekti">
+        {{ isAdmin ? 'Upravljaj projektima' : 'Otvori moje projekte' }}
+      </a>
 
-    <div class="card">
-      <h3>Resursi</h3>
-      <p>Pregled korišćenih resursa u projektima.</p>
+      @if (isAdmin) {
+        <a class="secondary-action" routerLink="/admin/projekti/novi">Novi projekat</a>
+      }
     </div>
   </div>
+
+  @if (loading) {
+    <div class="panel">
+      <p>Ucitavanje dashboard podataka...</p>
+    </div>
+  }
+
+  @if (greska) {
+    <div class="panel error-panel">
+      <p>{{ greska }}</p>
+    </div>
+  }
+
+  @if (!loading && !greska) {
+    <div class="stats-grid">
+      @for (card of cards; track card.label) {
+        <article class="stat-card">
+          <span class="stat-label">{{ card.label }}</span>
+          <strong class="stat-value">{{ card.value }}</strong>
+          <p>{{ card.note }}</p>
+        </article>
+      }
+    </div>
+
+    <div class="content-grid">
+      <article class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Projekti za fokus</h2>
+            <p>Najrelevantniji projekti po roku i datumu pocetka.</p>
+          </div>
+
+          <a routerLink="/moji-projekti">Vidi sve</a>
+        </div>
+
+        @if (istaknutiProjekti.length === 0) {
+          <p class="empty-copy">Trenutno nema projekata za prikaz.</p>
+        } @else {
+          <div class="project-list">
+            @for (projekat of istaknutiProjekti; track projekat.id) {
+              <a class="project-row" [routerLink]="['/projekti', projekat.id]">
+                <div>
+                  <h3>{{ projekat.naziv }}</h3>
+                  <p>{{ projekat.fazaRazvoja || 'Faza razvoja nije definisana.' }}</p>
+                </div>
+
+                <div class="project-meta">
+                  <span class="status-pill">{{ projekat.status }}</span>
+                  <small>Rok: {{ formatDate(projekat.rok) }}</small>
+                </div>
+              </a>
+            }
+          </div>
+        }
+      </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <div>
+            <h2>Potrebna paznja</h2>
+            <p>Aktivni projekti ciji je rok vec probijen.</p>
+          </div>
+        </div>
+
+        @if (kasneciProjekti.length === 0) {
+          <p class="empty-copy">Nema projekata sa probijenim rokom. Dobro napredujete.</p>
+        } @else {
+          <div class="alert-list">
+            @for (projekat of kasneciProjekti; track projekat.id) {
+              <a class="alert-row" [routerLink]="['/projekti', projekat.id]">
+                <div>
+                  <strong>{{ projekat.naziv }}</strong>
+                  <p>{{ projekat.opis || 'Opis projekta nije dodat.' }}</p>
+                </div>
+
+                <span>{{ formatDate(projekat.rok) }}</span>
+              </a>
+            }
+          </div>
+        }
+      </article>
+    </div>
+  }
 </section>
