@@ -48,5 +48,11 @@ namespace ProjektniMenadzment.Repositories
             return await _context.Korisnicis
                 .FirstOrDefaultAsync(k => k.IdentityUserId == identityUserId);
         }
+
+        public async Task<Korisnici?> GetByEmailAsync(string email)
+        {
+            return await _context.Korisnicis
+                .FirstOrDefaultAsync(k => k.Email == email);
+        }
     }
 }

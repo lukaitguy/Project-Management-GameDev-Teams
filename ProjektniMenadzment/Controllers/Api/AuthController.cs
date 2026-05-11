@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using ProjektniMenadzment.Data;
 using ProjektniMenadzment.Models.Domain;
 using ProjektniMenadzment.Models.DTOs;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ProjektniMenadzment.Controllers.Api
 {
@@ -12,16 +16,17 @@ namespace ProjektniMenadzment.Controllers.Api
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
         private readonly PMDbContext _pmDbContext;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<IdentityUser> userManager, 
-                              SignInManager<IdentityUser> signInManager,
-                              PMDbContext pmDbContext)
+        public AuthController(
+            UserManager<IdentityUser> userManager,
+            PMDbContext pmDbContext,
+            IConfiguration configuration)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
             _pmDbContext = pmDbContext;
+            _configuration = configuration;
         }
 
         [HttpPost("registracija")]
@@ -51,7 +56,6 @@ namespace ProjektniMenadzment.Controllers.Api
             };
 
             var rezultat = await _userManager.CreateAsync(identityUser, request.Lozinka);
-
             if (!rezultat.Succeeded)
             {
                 return BadRequest(new
@@ -61,7 +65,6 @@ namespace ProjektniMenadzment.Controllers.Api
                 });
             }
 
-            //Provera upisa u aplikacionu bazu
             try
             {
                 var korisnik = new Korisnici
@@ -84,7 +87,6 @@ namespace ProjektniMenadzment.Controllers.Api
                 return StatusCode(500, new { message = "Korisnik neuspesno kreiran u aplikacionoj bazi." });
             }
 
-
             return Ok(new { message = "Registracija je uspešno završena." });
         }
 
@@ -98,56 +100,73 @@ namespace ProjektniMenadzment.Controllers.Api
             }
 
             var korisnik = await _userManager.FindByEmailAsync(request.EmailIliKorisnickoIme)
-                          ?? await _userManager.FindByNameAsync(request.EmailIliKorisnickoIme);
+                        ?? await _userManager.FindByNameAsync(request.EmailIliKorisnickoIme);
 
-            if (korisnik == null)
-            {
+            if (korisnik == null || !await _userManager.CheckPasswordAsync(korisnik, request.Lozinka))
                 return Unauthorized(new { message = "Pogrešni podaci za prijavu." });
-            }
 
-            var rezultat = await _signInManager.PasswordSignInAsync(
-                korisnik.UserName!,
-                request.Lozinka,
-                request.ZapamtiMe,
-                lockoutOnFailure: false);
-
-            if (!rezultat.Succeeded)
-            {
-                return Unauthorized(new { message = "Pogrešni podaci za prijavu." });
-            }
+            var roles = await _userManager.GetRolesAsync(korisnik);
+            var token = GenerateJwtToken(korisnik, roles);
 
             return Ok(new
             {
-                message = "Uspešna prijava.",
+                token,
                 korisnik = new
                 {
                     korisnickoIme = korisnik.UserName,
-                    email = korisnik.Email
+                    email = korisnik.Email,
+                    isAdmin = roles.Contains("Administrator"),
+                    isPM = roles.Contains("ProjektniMenadzer")
                 }
             });
         }
 
         [HttpGet("trenutni-korisnik")]
-        public IActionResult TrenutniKorisnik()
+        [Authorize]
+        public async Task<IActionResult> TrenutniKorisnik()
         {
-            if (!User.Identity?.IsAuthenticated ?? true)
-            {
+            var korisnik = await _userManager.GetUserAsync(User);
+            if (korisnik == null)
                 return Unauthorized(new { message = "Korisnik nije prijavljen." });
-            }
+
+            var roles = await _userManager.GetRolesAsync(korisnik);
 
             return Ok(new
             {
-                korisnickoIme = User.Identity!.Name,
-                isAdmin = User.IsInRole("Administrator"),
-                isPM = User.IsInRole("ProjektniMenadzer")
+                korisnickoIme = korisnik.UserName,
+                email = korisnik.Email,
+                isAdmin = roles.Contains("Administrator"),
+                isPM = roles.Contains("ProjektniMenadzer")
             });
         }
 
-        [HttpPost("odjava")]
-        public async Task<IActionResult> Odjava()
+        private string GenerateJwtToken(IdentityUser korisnik, IList<string> roles)
         {
-            await _signInManager.SignOutAsync();
-            return Ok(new { message = "Uspešna odjava." });
+            var claims = new List<Claim>
+            {
+                new(ClaimTypes.NameIdentifier, korisnik.Id),
+                new(ClaimTypes.Name, korisnik.UserName!),
+                new(ClaimTypes.Email, korisnik.Email!)
+            };
+
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var expires = DateTime.UtcNow.AddMinutes(
+                double.Parse(_configuration["Jwt:ExpiresInMinutes"]!));
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: expires,
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

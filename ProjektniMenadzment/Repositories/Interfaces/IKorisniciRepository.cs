@@ -10,5 +10,6 @@ namespace ProjektniMenadzment.Repositories.Interfaces
         Task<List<SelectListItem>> GetSelectOptionsAsync();
         Task<Korisnici> AddAsync(Korisnici korisnik);
         Task<Korisnici> GetByIdentityUserIdAsync(string identityUserId);
+        Task<Korisnici?> GetByEmailAsync(string email);
     }
 }

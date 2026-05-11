@@ -24,7 +24,9 @@ namespace ProjektniMenadzment.Repositories
         public async Task<IEnumerable<KomentariZadatak>> GetAllByIdAsync(Guid zadatakId)
         {
             return await _context.KomentariZadataks
-                .Where(x => x.ZadatakId == zadatakId)
+                .Include(k => k.Korisnik)
+                .Where(k => k.ZadatakId == zadatakId)
+                .OrderBy(k => k.DatumKreiranja)
                 .ToListAsync();
         }
     }

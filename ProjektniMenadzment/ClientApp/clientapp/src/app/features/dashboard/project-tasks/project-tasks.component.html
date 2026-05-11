@@ -1,0 +1,139 @@
+<div class="tasks-container">
+
+  <div class="tasks-header">
+    <h3>Zadaci</h3>
+    @if (isAdmin) {
+      <button class="btn-primary" (click)="toggleForm()">
+        {{ showForm ? 'Otkaži' : '+ Novi zadatak' }}
+      </button>
+    }
+  </div>
+
+  @if (greska) {
+    <div class="error-message">{{ greska }}</div>
+  }
+
+  @if (showForm && isAdmin) {
+    <div class="task-form">
+      <div class="form-row">
+        <input [(ngModel)]="form.naslov" placeholder="Naslov *" />
+        <select [(ngModel)]="form.status">
+          @for (s of statusi; track s) {
+            <option [value]="s">{{ s }}</option>
+          }
+        </select>
+        <select [(ngModel)]="form.prioritet">
+          @for (p of prioriteti; track p) {
+            <option [value]="p">{{ p }}</option>
+          }
+        </select>
+      </div>
+      <div class="form-row">
+        <select [(ngModel)]="form.tipZadatka">
+          <option [value]="null">-- Tip zadatka --</option>
+          @for (t of tipoviZadatka; track t) {
+            <option [value]="t">{{ t }}</option>
+          }
+        </select>
+        <select [(ngModel)]="form.dodeljenKorisnikuId">
+          <option [value]="null">-- Dodeli članu --</option>
+          @for (c of clanovi; track c.korisnikId) {
+            <option [value]="c.korisnikId">{{ c.ime }} {{ c.prezime }}</option>
+          }
+        </select>
+        <input type="date" [(ngModel)]="form.rok" />
+      </div>
+      <textarea [(ngModel)]="form.opis" placeholder="Opis zadatka..."></textarea>
+      <button class="btn-primary" (click)="sacuvajZadatak()">Sačuvaj</button>
+    </div>
+  }
+
+  @if (ucitavanje) {
+    <p>Učitavanje zadataka...</p>
+  } @else if (zadaci.length === 0) {
+    <p class="empty-state">Nema zadataka na ovom projektu.</p>
+  } @else {
+    <div class="task-list">
+      @for (zadatak of zadaci; track zadatak.id) {
+        <div class="task-card" [class]="'priority-' + zadatak.prioritet.toLowerCase()">
+
+          <!-- Task header — click to expand -->
+          <div class="task-card-header" (click)="toggleTask(zadatak.id)">
+            <div class="task-title-row">
+              <span class="task-title">{{ zadatak.naslov }}</span>
+              @if (zadatak.tipZadatka) {
+                <span class="task-type">{{ zadatak.tipZadatka }}</span>
+              }
+            </div>
+            <div class="task-meta">
+              <span class="badge status">{{ zadatak.status }}</span>
+              <span class="badge prioritet">{{ zadatak.prioritet }}</span>
+              @if (zadatak.dodeljenKorisnikuIme) {
+                <span class="assignee">👤 {{ zadatak.dodeljenKorisnikuIme }}</span>
+              }
+              @if (zadatak.rok) {
+                <span class="rok">📅 {{ zadatak.rok }}</span>
+              }
+            </div>
+          </div>
+
+          <!-- Task actions -->
+          <div class="task-card-actions">
+            <select [value]="zadatak.status"
+                    (change)="promeniStatus(zadatak, $any($event.target).value)">
+              @for (s of statusi; track s) {
+                <option [value]="s">{{ s }}</option>
+              }
+            </select>
+            @if (isAdmin) {
+              <button class="btn-danger-sm"
+                      (click)="obrisiZadatak(zadatak.id); $event.stopPropagation()">
+                Obriši
+              </button>
+            }
+          </div>
+
+          <!-- Expanded comments section -->
+          @if (expandedTaskId === zadatak.id) {
+            <div class="task-comments">
+              <h4>Komentari</h4>
+
+              @if (komentariUcitavanje[zadatak.id]) {
+                <p>Učitavanje komentara...</p>
+              } @else if (komentariMap[zadatak.id]?.length === 0) {
+                <p class="empty-state">Nema komentara.</p>
+              } @else {
+                <div class="comments-list">
+                  @for (k of komentariMap[zadatak.id]; track k.id) {
+                    <div class="comment-item">
+                      <div class="comment-header">
+                        <strong>{{ k.korisnikIme }}</strong>
+                        <span class="comment-date">
+                          {{ k.datumKreiranja | date:'dd.MM.yyyy HH:mm' }}
+                        </span>
+                      </div>
+                      <p class="comment-body">{{ k.sadrzaj }}</p>
+                    </div>
+                  }
+                </div>
+              }
+
+              <!-- Add comment -->
+              <div class="comment-form">
+                <textarea
+                  [(ngModel)]="noviKomentarMap[zadatak.id]"
+                  placeholder="Dodaj komentar...">
+                </textarea>
+                <button class="btn-primary"
+                        (click)="dodajKomentar(zadatak.id)">
+                  Objavi
+                </button>
+              </div>
+            </div>
+          }
+
+        </div>
+      }
+    </div>
+  }
+</div>

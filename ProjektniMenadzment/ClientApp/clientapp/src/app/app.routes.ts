@@ -19,46 +19,55 @@ import { AddProjectComponent } from './features/dashboard/add-project/add-projec
 import { EditProjectComponent } from './features/dashboard/edit-project/edit-project.component';
 
 export const routes: Routes = [
-    {
-        path: '',
-        component: PublicLayoutComponent,
-        children: [
-            {
-                path: '', component: HomeComponent
-            },
-            {
-                path: 'o-nama', component: AboutComponent
-            },
-            {
-                path: 'kontakt', component: ContactComponent
-            }
-        ]
-    },
-    {
-        path: '',
-        component: AuthLayoutComponent,
-        canActivate: [guestGuard],
-        children: [
-            {
-                path: 'prijava', component: LoginComponent
-            },
-            {
-                path: 'registracija', component: RegisterComponent
-            }
-        ]
-    },
-    {
-        path: '',
-        component: DashboardLayoutComponent,
-        canActivate: [authGuard],
-        children: [
-            { path: 'dashboard', component: DashboardHomeComponent },
-            { path: 'moji-projekti', component: MyProjectsComponent },
-            { path: 'projekti/:id', component: ProjectDetailsComponent },
-            { path: 'projekti/:id/buildovi', component: ProjectBuildsComponent },
-            { path: 'projekti/:id/buildovi/novi', component: AddBuildComponent },
-            { path: 'admin/projekti/novi', component: AddProjectComponent, canActivate: [adminGuard] },
-            { path: 'admin/projekti/:id/izmena', component: EditProjectComponent, canActivate: [adminGuard] }
-        ]
-    }
+  // ── Public ────────────────────────────────────────────────
+  {
+    path: '',
+    component: PublicLayoutComponent,
+    children: [
+      { path: '', component: HomeComponent, pathMatch: 'full' },
+      { path: 'o-nama', component: AboutComponent },
+      { path: 'kontakt', component: ContactComponent }
+    ]
+  },
+
+  // ── Auth (guests only) ────────────────────────────────────
+  {
+    path: '',
+    component: AuthLayoutComponent,
+    canActivate: [guestGuard],
+    children: [
+      { path: 'prijava', component: LoginComponent },
+      { path: 'registracija', component: RegisterComponent }
+    ]
+  },
+
+  // ── Dashboard (authenticated users only) ─────────────────
+  {
+    path: '',
+    component: DashboardLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      { path: 'dashboard', component: DashboardHomeComponent },
+      { path: 'moji-projekti', component: MyProjectsComponent },
+      { path: 'projekti/:id', component: ProjectDetailsComponent },
+      { path: 'projekti/:id/buildovi', component: ProjectBuildsComponent },
+      { path: 'projekti/:id/buildovi/novi', component: AddBuildComponent },
+      {
+        path: 'admin/projekti/novi',
+        component: AddProjectComponent,
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'admin/projekti/:id/izmena',
+        component: EditProjectComponent,
+        canActivate: [adminGuard]
+      }
+    ]
+  },
+
+  // ── Fallback ──────────────────────────────────────────────
+  {
+    path: '**',
+    redirectTo: ''
+  }
 ];

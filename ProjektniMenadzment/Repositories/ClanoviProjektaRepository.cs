@@ -35,6 +35,14 @@ namespace ProjektniMenadzment.Repositories
                 .ToListAsync();
         }
 
-
+        public async Task<bool> RemoveAsync(Guid projekatId, Guid korisnikId)
+        {
+            var clan = await _context.ClanoviProjekta
+                .FirstOrDefaultAsync(cp => cp.ProjekatId == projekatId && cp.KorisnikId == korisnikId);
+            if (clan == null) return false;
+            _context.ClanoviProjekta.Remove(clan);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

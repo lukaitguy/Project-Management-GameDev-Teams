@@ -1,0 +1,52 @@
+<div class="members-container">
+
+  <div class="members-header">
+    <h3>Članovi projekta</h3>
+    @if (isAdmin) {
+      <button class="btn-primary" (click)="toggleForm()">
+        {{ showForm ? 'Otkaži' : '+ Dodaj člana' }}
+      </button>
+    }
+  </div>
+
+  @if (greska) { <div class="error-message">{{ greska }}</div> }
+  @if (uspeh) { <div class="success-message">{{ uspeh }}</div> }
+
+  @if (showForm && isAdmin) {
+    <div class="member-form">
+      <input [(ngModel)]="noviEmail" type="email" placeholder="Email korisnika *" />
+      <select [(ngModel)]="novaUloga">
+        <option value="">-- Uloga (opciono) --</option>
+        @for (u of uloge; track u) {
+          <option [value]="u">{{ u }}</option>
+        }
+      </select>
+      <button class="btn-primary" (click)="dodajClana()">Dodaj</button>
+    </div>
+  }
+
+  @if (ucitavanje) {
+    <p>Učitavanje članova...</p>
+  } @else if (clanovi.length === 0) {
+    <p class="empty-state">Nema članova na ovom projektu.</p>
+  } @else {
+    <div class="members-list">
+      @for (clan of clanovi; track clan.korisnikId) {
+        <div class="member-card">
+          <div class="member-info">
+            <span class="member-name">{{ clan.ime }} {{ clan.prezime }}</span>
+            <span class="member-email">{{ clan.email }}</span>
+            @if (clan.uloga) {
+              <span class="badge uloga">{{ clan.uloga }}</span>
+            }
+          </div>
+          @if (isAdmin) {
+            <button class="btn-danger-sm" (click)="ukloniClana(clan.korisnikId)">
+              Ukloni
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
