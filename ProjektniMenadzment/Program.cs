@@ -81,6 +81,7 @@ builder.Services.AddScoped<IProjektiService, ProjektiService>();
 builder.Services.AddScoped<IZanroviService, ZanroviService>();
 builder.Services.AddScoped<IZadaciService, ZadaciService>();
 builder.Services.AddScoped<IKomentariService, KomentariService>();
+builder.Services.AddScoped<IResursiService, ResursiService>();
 
 var app = builder.Build();
 
