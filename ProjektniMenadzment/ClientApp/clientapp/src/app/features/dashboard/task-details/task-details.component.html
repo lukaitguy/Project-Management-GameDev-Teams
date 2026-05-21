@@ -1,0 +1,136 @@
+<section class="task-details-page">
+
+  <div class="page-header">
+    <div>
+      <h1>{{ zadatak?.naslov ?? 'Detalji zadatka' }}</h1>
+      <p>Pregled detalja, promena statusa i komentari.</p>
+    </div>
+    <div class="header-actions">
+      <a class="back-link" [routerLink]="['/projekti', projekatId, 'zadaci']">
+        Nazad na zadatke
+      </a>
+    </div>
+  </div>
+
+  @if (loading) {
+    <p>Učitavanje...</p>
+  } @else if (greska) {
+    <p class="error-text">{{ greska }}</p>
+  } @else if (zadatak) {
+
+    <div class="details-grid">
+
+      <div class="detail-card">
+        <h3>Informacije o zadatku</h3>
+        <div class="detail-list">
+          <div class="detail-item">
+            <span class="label">Naslov</span>
+            <span class="value">{{ zadatak.naslov }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Tip</span>
+            <span class="value">{{ zadatak.tipZadatka || 'N/A' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Prioritet</span>
+            <span class="value">
+              <span class="badge" [class]="'priority-' + zadatak.prioritet.toLowerCase()">
+                {{ zadatak.prioritet }}
+              </span>
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Rok</span>
+            <span class="value">{{ zadatak.rok || 'Nije definisan' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Kreirao</span>
+            <span class="value">{{ zadatak.kreiraoKorisnikIme }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Datum kreiranja</span>
+            <span class="value">{{ zadatak.datumKreiranja | date:'dd.MM.yyyy HH:mm' }}</span>
+          </div>
+          @if (zadatak.opis) {
+            <div class="detail-item full-width">
+              <span class="label">Opis</span>
+              <span class="value">{{ zadatak.opis }}</span>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <h3>Status i dodela</h3>
+        <div class="detail-list">
+          <div class="detail-item">
+            <span class="label">Trenutni status</span>
+            <span class="value">
+              <span class="badge status-badge">{{ zadatak.status }}</span>
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="label">Dodeljeno</span>
+            <span class="value">
+              {{ zadatak.dodeljenKorisnikuIme || 'Nije dodeljeno' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="status-change">
+          <h4>Promeni status</h4>
+          @if (statusGreska) {
+            <p class="error-text">{{ statusGreska }}</p>
+          }
+          <div class="status-buttons">
+            @for (s of statusi; track s) {
+              <button
+                [class.active]="zadatak.status === s"
+                (click)="promeniStatus(s)">
+                {{ s }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Comments section -->
+    <div class="comments-section">
+      <h2>Komentari</h2>
+
+      @if (komentari.length === 0) {
+        <p class="empty-state">Nema komentara na ovom zadatku.</p>
+      } @else {
+        <div class="comments-list">
+          @for (k of komentari; track k.id) {
+            <div class="comment-card">
+              <div class="comment-header">
+                <strong>{{ k.korisnikIme }}</strong>
+                <span class="comment-date">
+                  {{ k.datumKreiranja | date:'dd.MM.yyyy HH:mm' }}
+                </span>
+              </div>
+              <p class="comment-body">{{ k.sadrzaj }}</p>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="comment-form">
+        <h4>Dodaj komentar</h4>
+        @if (komentarGreska) {
+          <p class="error-text">{{ komentarGreska }}</p>
+        }
+        <textarea
+          [(ngModel)]="noviKomentar"
+          placeholder="Napiši komentar..."
+          rows="3">
+        </textarea>
+        <button class="btn-primary" (click)="dodajKomentar()">Objavi</button>
+      </div>
+    </div>
+  }
+
+</section>

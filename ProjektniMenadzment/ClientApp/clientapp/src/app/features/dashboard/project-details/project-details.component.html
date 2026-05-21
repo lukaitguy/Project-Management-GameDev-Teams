@@ -132,19 +132,24 @@
 
       <!-- Tasks — receives members for the assign dropdown -->
       <div class="section-card">
-        <app-project-tasks
-          [projekatId]="projekat.id"
-          [clanovi]="clanovi">
-        </app-project-tasks>
-      </div>
+        <div class="section-header">
+          <h2>Zadaci</h2>
+          <a class="section-link" [routerLink]="['/projekti', projekat.id, 'zadaci']">
+            Pregled
+          </a>
+        </div>
+        <p>Pregled i upravljanje zadacima projekta.</p>
+      </div>  
 
-      <!-- Resources — placeholder for now -->
+      <!-- Resources  -->
       <div class="section-card">
         <div class="section-header">
           <h2>Resursi</h2>
-          <button type="button">Pregled</button>
+          <a class="section-link" [routerLink]="['/projekti', projekat.id, 'resursi']">
+            Pregled
+          </a>
         </div>
-        <p>Ovde će biti prikazani resursi koji se koriste na projektu.</p>
+        <p>Pregled i upravljanje resursima projekta.</p>
       </div>
 
     </div>

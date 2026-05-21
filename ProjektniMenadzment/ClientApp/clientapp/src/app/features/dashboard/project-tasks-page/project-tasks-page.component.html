@@ -1,0 +1,114 @@
+<!-- features/dashboard/project-tasks-page/project-tasks-page.component.html -->
+<section class="project-tasks-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Zadaci projekta</h1>
+      <p>Pregled svih zadataka povezanih sa projektom.</p>
+    </div>
+    <div class="header-actions">
+      <a class="back-link" [routerLink]="['/projekti', projekatId]">
+        Nazad na projekat
+      </a>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <select [(ngModel)]="filterStatus" (change)="applyFilters()">
+      <option value="">Svi statusi</option>
+      @for (s of statusi; track s) {
+        <option [value]="s">{{ s }}</option>
+      }
+    </select>
+    <select [(ngModel)]="filterPrioritet" (change)="applyFilters()">
+      <option value="">Svi prioriteti</option>
+      @for (p of prioriteti; track p) {
+        <option [value]="p">{{ p }}</option>
+      }
+    </select>
+    @if (filterStatus || filterPrioritet) {
+      <button class="btn-reset" (click)="resetFilters()">Resetuj filtere</button>
+    }
+  </div>
+
+  @if (loading) {
+    <p>Učitavanje zadataka...</p>
+  }
+
+  @if (greska) {
+    <p class="error-text">{{ greska }}</p>
+  }
+
+  @if (!loading && !greska && zadaci.length === 0) {
+    <div class="empty-state">
+      <p>Ovaj projekat trenutno nema evidentirane zadatke.</p>
+    </div>
+  }
+
+  @if (!loading && !greska && filteredZadaci.length === 0 && zadaci.length > 0) {
+    <div class="empty-state">
+      <p>Nema zadataka koji odgovaraju filterima.</p>
+    </div>
+  }
+
+  @if (!loading && !greska && pagedZadaci.length > 0) {
+    <div class="task-list">
+      @for (zadatak of pagedZadaci; track zadatak.id) {
+        <a class="task-card"
+           [routerLink]="['/projekti', projekatId, 'zadaci', zadatak.id]">
+          <div class="task-card-header">
+            <div>
+              <h3>{{ zadatak.naslov }}</h3>
+              @if (zadatak.tipZadatka) {
+                <p class="task-type">{{ zadatak.tipZadatka }}</p>
+              }
+            </div>
+            <div class="task-badges">
+              <span class="badge status-badge"
+                    [class]="'status-' + zadatak.status.toLowerCase().replace(' ', '-')">
+                {{ zadatak.status }}
+              </span>
+              <span class="badge priority-badge"
+                    [class]="'priority-' + zadatak.prioritet.toLowerCase()">
+                {{ zadatak.prioritet }}
+              </span>
+            </div>
+          </div>
+
+          <div class="task-meta">
+            @if (zadatak.dodeljenKorisnikuIme) {
+              <span>👤 {{ zadatak.dodeljenKorisnikuIme }}</span>
+            }
+            @if (zadatak.rok) {
+              <span>📅 {{ zadatak.rok }}</span>
+            }
+            <span class="task-date">
+              Kreiran: {{ zadatak.datumKreiranja | date:'dd.MM.yyyy' }}
+            </span>
+          </div>
+        </a>
+      }
+    </div>
+
+    @if (totalPages > 1) {
+      <div class="pagination">
+        <button (click)="prethodnaStranica()" [disabled]="currentPage === 1">
+          Prethodna
+        </button>
+        <div class="page-numbers">
+          @for (page of pageNumbers; track page) {
+            <button [class.active]="page === currentPage"
+                    (click)="prikaziStranicu(page)">
+              {{ page }}
+            </button>
+          }
+        </div>
+        <button (click)="sledecaStranica()" [disabled]="currentPage === totalPages">
+          Sledeća
+        </button>
+      </div>
+    }
+  }
+
+</section>

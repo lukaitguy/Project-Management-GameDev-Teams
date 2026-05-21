@@ -1,0 +1,86 @@
+<div class="resources-page">
+
+  <div class="resources-header">
+    <h2>Resursi projekta</h2>
+    @if (isAdmin) {
+      <button class="btn-primary" (click)="toggleForm()">
+        {{ showForm ? 'Otkaži' : '+ Novi resurs' }}
+      </button>
+    }
+  </div>
+
+  @if (greska) {
+    <div class="error-message">{{ greska }}</div>
+  }
+
+  @if (showForm && isAdmin) {
+    <div class="resource-form">
+      <h3>{{ editingId ? 'Izmena resursa' : 'Novi resurs' }}</h3>
+      <div class="form-row">
+        <input [(ngModel)]="form.naziv" placeholder="Naziv *" />
+        <select [(ngModel)]="form.tip">
+          <option value="">-- Tip resursa *--</option>
+          @for (t of tipoviResursa; track t) {
+            <option [value]="t">{{ t }}</option>
+          }
+        </select>
+        <input type="number" [(ngModel)]="form.cena" placeholder="Cena (RSD)" />
+      </div>
+      <div class="form-row">
+        <select [(ngModel)]="form.dodeljenKorisniku">
+          <option [value]="null">-- Dodeli članu (opciono) --</option>
+          @for (c of clanovi; track c.korisnikId) {
+            <option [value]="c.korisnikId">{{ c.ime }} {{ c.prezime }}</option>
+          }
+        </select>
+      </div>
+      <textarea [(ngModel)]="form.opis" placeholder="Opis resursa..."></textarea>
+      <button class="btn-primary" (click)="sacuvajResurs()">
+        {{ editingId ? 'Sačuvaj izmene' : 'Dodaj resurs' }}
+      </button>
+    </div>
+  }
+
+  @if (ucitavanje) {
+    <p>Učitavanje resursa...</p>
+  } @else if (resursi.length === 0) {
+    <p class="empty-state">Nema resursa na ovom projektu.</p>
+  } @else {
+    <div class="resources-list">
+      @for (resurs of resursi; track resurs.id) {
+        <div class="resource-card">
+          <div class="resource-card-header">
+            <div>
+              <span class="resource-name">{{ resurs.naziv }}</span>
+              <span class="badge tip">{{ resurs.tip }}</span>
+            </div>
+            @if (resurs.cena != null) {
+              <span class="resource-price">{{ resurs.cena | number:'1.2-2' }} RSD</span>
+            }
+          </div>
+
+          @if (resurs.opis) {
+            <p class="resource-desc">{{ resurs.opis }}</p>
+          }
+
+          <div class="resource-footer">
+            @if (resurs.dodeljenKorisnikuIme) {
+              <span class="assignee">👤 {{ resurs.dodeljenKorisnikuIme }}</span>
+            } @else {
+              <span class="unassigned">Nije dodeljeno</span>
+            }
+            <span class="date">{{ resurs.datumKreiranja | date:'dd.MM.yyyy' }}</span>
+
+            @if (isAdmin) {
+              <div class="resource-actions">
+                <button class="btn-secondary-sm" (click)="urediResurs(resurs)">Izmeni</button>
+                <button class="btn-danger-sm" (click)="obrisiResurs(resurs.id)">Obriši</button>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>

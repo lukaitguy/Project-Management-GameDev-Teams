@@ -17,6 +17,10 @@ import { ProjectBuildsComponent } from './features/dashboard/project-builds/proj
 import { AddBuildComponent } from './features/dashboard/add-build/add-build.component';
 import { AddProjectComponent } from './features/dashboard/add-project/add-project.component';
 import { EditProjectComponent } from './features/dashboard/edit-project/edit-project.component';
+import { ProjectResourcesComponent } from './features/dashboard/project-resources/project-resources.component';
+import { ProjectTasksPageComponent } from './features/dashboard/project-tasks-page/project-tasks-page.component';
+import { TaskDetailsComponent } from './features/dashboard/task-details/task-details.component';
+
 
 export const routes: Routes = [
   // ── Public ────────────────────────────────────────────────
@@ -52,6 +56,9 @@ export const routes: Routes = [
       { path: 'projekti/:id', component: ProjectDetailsComponent },
       { path: 'projekti/:id/buildovi', component: ProjectBuildsComponent },
       { path: 'projekti/:id/buildovi/novi', component: AddBuildComponent },
+      { path: 'projekti/:id/resursi', component: ProjectResourcesComponent },
+      { path: 'projekti/:id/zadaci', component: ProjectTasksPageComponent },
+      { path: 'projekti/:id/zadaci/:zadatakId', component: TaskDetailsComponent },
       {
         path: 'admin/projekti/novi',
         component: AddProjectComponent,
