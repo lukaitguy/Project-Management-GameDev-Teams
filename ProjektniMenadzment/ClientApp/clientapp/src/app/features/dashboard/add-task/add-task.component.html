@@ -1,0 +1,104 @@
+<section class="add-task-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Novi zadatak</h1>
+      <p>Kreiranje novog zadatka za projekat.</p>
+    </div>
+    <div class="header-actions">
+      <a class="back-link" [routerLink]="['/projekti', projekatId, 'zadaci']">
+        Nazad na zadatke
+      </a>
+    </div>
+  </div>
+
+  @if (greska) {
+    <div class="error-message">{{ greska }}</div>
+  }
+
+  <div class="form-card">
+
+    <div class="form-group">
+      <label>Naslov *</label>
+      <input
+        [(ngModel)]="form.naslov"
+        placeholder="Unesite naslov zadatka"
+        maxlength="200" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Status *</label>
+        <select [(ngModel)]="form.status">
+          @for (s of statusi; track s) {
+            <option [value]="s">{{ s }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Prioritet *</label>
+        <select [(ngModel)]="form.prioritet">
+          @for (p of prioriteti; track p) {
+            <option [value]="p">{{ p }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Tip zadatka</label>
+        <select [(ngModel)]="form.tipZadatka">
+          <option [value]="null">-- Izaberi tip --</option>
+          @for (t of tipoviZadatka; track t) {
+            <option [value]="t">{{ t }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Dodeli članu</label>
+        @if (ucitavanjeClanova) {
+          <p class="loading-text">Učitavanje članova...</p>
+        } @else {
+          <select [(ngModel)]="form.dodeljenKorisnikuId">
+            <option [value]="null">-- Nije dodeljeno --</option>
+            @for (c of clanovi; track c.korisnikId) {
+              <option [value]="c.korisnikId">
+                {{ c.ime }} {{ c.prezime }}
+                @if (c.uloga) { ({{ c.uloga }}) }
+              </option>
+            }
+          </select>
+        }
+      </div>
+
+      <div class="form-group">
+        <label>Rok</label>
+        <input type="date" [(ngModel)]="form.rok" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Opis</label>
+      <textarea
+        [(ngModel)]="form.opis"
+        placeholder="Unesite opis zadatka..."
+        rows="4">
+      </textarea>
+    </div>
+
+    <div class="form-actions">
+      <a class="btn-secondary"
+         [routerLink]="['/projekti', projekatId, 'zadaci']">
+        Otkaži
+      </a>
+      <button class="btn-primary" (click)="sacuvaj()">
+        Kreiraj zadatak
+      </button>
+    </div>
+
+  </div>
+
+</section>

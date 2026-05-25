@@ -2,11 +2,12 @@
 
   <div class="tasks-header">
     <h3>Zadaci</h3>
-    @if (isAdmin) {
-      <button class="btn-primary" (click)="toggleForm()">
-        {{ showForm ? 'Otkaži' : '+ Novi zadatak' }}
-      </button>
-    }
+@if (isAdmin) {
+  <a class="new-link"
+     [routerLink]="['/projekti', projekatId, 'zadaci', 'novi']">
+    + Novi zadatak
+  </a>
+}
   </div>
 
   @if (greska) {

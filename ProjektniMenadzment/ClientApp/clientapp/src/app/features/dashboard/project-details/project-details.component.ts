@@ -9,6 +9,7 @@ import { Build } from '../../../core/models/build.model';
 import { ClanProjekta } from '../../../core/models/clan-projekta.model';
 import { ProjectMembersComponent } from '../project-members/project-members.component';
 import { ProjectTasksComponent } from '../project-tasks/project-tasks.component';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-project-details',
@@ -23,6 +24,7 @@ export class ProjectDetailsComponent implements OnInit {
   poslednjiBuild?: Build;
   loadingBuildovi = false;
   greskaBuildovi = '';
+  isAdmin = false;
 
   // Passed from members component to tasks component
   // so tasks can populate the "assign to" dropdown
@@ -31,10 +33,12 @@ export class ProjectDetailsComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private projektiService: ProjektiService,
-    private buildoviService: BuildoviService
+    private buildoviService: BuildoviService,
+    private authService: AuthService 
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.authService.getCurrentUser()?.isAdmin ?? false;
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
 

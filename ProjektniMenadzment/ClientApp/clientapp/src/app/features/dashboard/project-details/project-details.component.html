@@ -134,12 +134,21 @@
       <div class="section-card">
         <div class="section-header">
           <h2>Zadaci</h2>
-          <a class="section-link" [routerLink]="['/projekti', projekat.id, 'zadaci']">
-            Pregled
-          </a>
+          <div class="section-actions">
+            @if (isAdmin) {
+              <a class="section-link-green"
+                [routerLink]="['/projekti', projekat.id, 'zadaci', 'novi']">
+                + Novi
+              </a>
+            }
+            <a class="section-link"
+              [routerLink]="['/projekti', projekat.id, 'zadaci']">
+              Pregled
+            </a>
+          </div>
         </div>
         <p>Pregled i upravljanje zadacima projekta.</p>
-      </div>  
+      </div>
 
       <!-- Resources  -->
       <div class="section-card">

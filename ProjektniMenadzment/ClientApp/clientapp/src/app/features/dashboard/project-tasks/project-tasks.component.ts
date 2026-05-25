@@ -8,11 +8,12 @@ import { Zadatak } from '../../../core/models/zadatak.model';
 import { Komentar } from '../../../core/models/komentar.model';
 import { CreateZadatak } from '../../../core/models/create-zadatak.model';
 import { ClanProjekta } from '../../../core/models/clan-projekta.model';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-project-tasks',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './project-tasks.component.html',
   styleUrl: './project-tasks.component.scss'
 })

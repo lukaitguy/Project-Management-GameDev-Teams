@@ -20,6 +20,7 @@ import { EditProjectComponent } from './features/dashboard/edit-project/edit-pro
 import { ProjectResourcesComponent } from './features/dashboard/project-resources/project-resources.component';
 import { ProjectTasksPageComponent } from './features/dashboard/project-tasks-page/project-tasks-page.component';
 import { TaskDetailsComponent } from './features/dashboard/task-details/task-details.component';
+import { AddTaskComponent } from './features/dashboard/add-task/add-task.component';
 
 
 export const routes: Routes = [
@@ -58,6 +59,7 @@ export const routes: Routes = [
       { path: 'projekti/:id/buildovi/novi', component: AddBuildComponent },
       { path: 'projekti/:id/resursi', component: ProjectResourcesComponent },
       { path: 'projekti/:id/zadaci', component: ProjectTasksPageComponent },
+      { path: 'projekti/:id/zadaci/novi', component: AddTaskComponent, canActivate: [adminGuard] },
       { path: 'projekti/:id/zadaci/:zadatakId', component: TaskDetailsComponent },
       {
         path: 'admin/projekti/novi',
