@@ -32,10 +32,19 @@
         Moji resursi
       </a>
 
-      @if (korisnik?.isAdmin) {
-        <a routerLink="/admin/projekti/novi" routerLinkActive="active" class="admin-link">
+      @if (korisnik?.isAdmin || korisnik?.isPM) {
+        <a routerLink="/izvestaji/projekti" routerLinkActive="active" class="manager-link">
+          Izveštaji
+        </a>
+      }
+
+      @if (korisnik?.isAdmin || korisnik?.isPM) {
+        <a routerLink="/admin/projekti/novi" routerLinkActive="active" class="manager-link">
           Novi projekat
         </a>
+      }
+
+      @if (korisnik?.isAdmin) {
         <a routerLink="/admin/korisnici" routerLinkActive="active" class="admin-link">
           Korisnici
         </a>

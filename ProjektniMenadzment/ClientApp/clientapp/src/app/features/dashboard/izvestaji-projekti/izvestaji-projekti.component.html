@@ -1,0 +1,37 @@
+<section class="izvestaji-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Izveštaji o napretku</h1>
+      <p>Izaberite projekat za detaljan izveštaj.</p>
+    </div>
+  </div>
+
+  @if (loading) { <p>Ucitavanje projekata...</p> }
+  @if (greska)  { <p class="error">{{ greska }}</p> }
+
+  @if (!loading && !greska && projekti.length === 0) {
+    <div class="empty-state"><p>Nema dostupnih projekata.</p></div>
+  }
+
+  @if (!loading && projekti.length > 0) {
+    <div class="projekti-grid">
+      @for (p of projekti; track p.id) {
+        <a class="projekat-card" [routerLink]="['/izvestaji/projekti', p.id]">
+          <div class="card-top">
+            <div>
+              <h3>{{ p.naziv }}</h3>
+              <span class="faza">{{ p.fazaRazvoja || p.platforma || '—' }}</span>
+            </div>
+            <span class="status-pill status-{{ p.status | lowercase }}">{{ p.status }}</span>
+          </div>
+          <div class="card-meta">
+            <span>Pocetak: {{ formatDate(p.datumPocetka) }}</span>
+            <span>Rok: {{ formatDate(p.rok) }}</span>
+          </div>
+        </a>
+      }
+    </div>
+  }
+
+</section>

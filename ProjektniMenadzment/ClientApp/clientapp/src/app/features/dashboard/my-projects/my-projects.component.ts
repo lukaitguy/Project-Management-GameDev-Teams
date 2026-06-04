@@ -27,6 +27,14 @@ export class MyProjectsComponent implements OnInit {
     return this.authService.getCurrentUser()?.isAdmin === true;
   }
 
+  get isPM(): boolean {
+    return this.authService.getCurrentUser()?.isPM === true;
+  }
+
+  get canManage(): boolean {
+    return this.isAdmin || this.isPM;
+  }
+
   ngOnInit(): void {
     this.ucitajProjekte();
   }

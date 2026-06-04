@@ -1,0 +1,174 @@
+<section class="izvestaj-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Izveštaj o napretku</h1>
+      <p>{{ izvestaj?.naziv || 'Ucitavanje...' }}</p>
+    </div>
+    <a class="back-link" routerLink="/izvestaji/projekti">← Nazad</a>
+  </div>
+
+  @if (loading) { <p>Ucitavanje izvestaja...</p> }
+  @if (greska)  { <p class="error">{{ greska }}</p> }
+
+  @if (!loading && !greska && izvestaj) {
+
+    <!-- Project info bar -->
+    <div class="info-bar">
+      <div class="info-item">
+        <span class="info-label">Status</span>
+        <span class="status-pill status-{{ izvestaj.status | lowercase }}">{{ izvestaj.status }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Faza razvoja</span>
+        <span class="info-value">{{ izvestaj.fazaRazvoja || '—' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Platforma</span>
+        <span class="info-value">{{ izvestaj.platforma || '—' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Engine</span>
+        <span class="info-value">{{ izvestaj.engine || '—' }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Datum početka</span>
+        <span class="info-value">{{ formatDate(izvestaj.datumPocetka) }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Rok</span>
+        <span class="info-value days-badge" [class]="daysInfoClass">
+          {{ formatDate(izvestaj.rok) }}
+          @if (izvestaj.rok) { <em>{{ daysInfo }}</em> }
+        </span>
+      </div>
+    </div>
+
+    <div class="report-grid">
+
+      <!-- ── ZADACI ─────────────────────────────────────── -->
+      <div class="report-card span-2">
+        <h2 class="card-title">Zadaci</h2>
+
+        <div class="progress-section">
+          <div class="progress-header">
+            <span>Zavrsenost projekta</span>
+            <strong>{{ izvestaj.postotakZavrsenosti }}%</strong>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" [style.width]="progressWidth"></div>
+          </div>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-box total">
+            <strong>{{ izvestaj.ukupnoZadataka }}</strong>
+            <span>Ukupno</span>
+          </div>
+          <div class="stat-box done">
+            <strong>{{ izvestaj.zavrsenihZadataka }}</strong>
+            <span>Završeno</span>
+          </div>
+          <div class="stat-box active">
+            <strong>{{ izvestaj.uTokuZadataka }}</strong>
+            <span>U toku</span>
+          </div>
+          <div class="stat-box pending">
+            <strong>{{ izvestaj.nijeZapocetihZadataka }}</strong>
+            <span>Nije započet</span>
+          </div>
+          <div class="stat-box paused">
+            <strong>{{ izvestaj.pauziranihZadataka }}</strong>
+            <span>Pauziran</span>
+          </div>
+          <div class="stat-box cancelled">
+            <strong>{{ izvestaj.otkazanihZadataka }}</strong>
+            <span>Otkazan</span>
+          </div>
+          <div class="stat-box late" [class.has-issues]="izvestaj.zakasnelihZadataka > 0">
+            <strong>{{ izvestaj.zakasnelihZadataka }}</strong>
+            <span>Zakasneo rok</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TIM ────────────────────────────────────────── -->
+      <div class="report-card">
+        <h2 class="card-title">Analiza tima</h2>
+
+        @if (izvestaj.clanovi.length === 0) {
+          <p class="muted">Nema evidentiranih članova.</p>
+        } @else {
+          <table class="team-table">
+            <thead>
+              <tr>
+                <th>Član</th>
+                <th>Uloga</th>
+                <th title="Ukupno zadataka">Uk.</th>
+                <th title="Završenih zadataka">Zav.</th>
+                <th title="Aktivnih zadataka">Akt.</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (clan of izvestaj.clanovi; track clan.imeIPrezime) {
+                <tr>
+                  <td class="member-name">{{ clan.imeIPrezime }}</td>
+                  <td class="muted-sm">{{ clan.uloga || '—' }}</td>
+                  <td class="count">{{ clan.ukupnoZadataka }}</td>
+                  <td class="count done-text">{{ clan.zavrsenihZadataka }}</td>
+                  <td class="count active-text">{{ clan.aktivnihZadataka }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+
+      <!-- ── FINANSIJE ──────────────────────────────────── -->
+      <div class="report-card">
+        <h2 class="card-title">Finansijski izveštaj</h2>
+
+        <div class="finance-summary">
+          <div class="finance-row">
+            <span>Budzet projekta</span>
+            <strong>{{ formatCurrency(izvestaj.budzet) }}</strong>
+          </div>
+          <div class="finance-row">
+            <span>Ukupni troškovi resursa</span>
+            <strong class="cost">{{ formatCurrency(izvestaj.ukupniTroskoviResursa) }}</strong>
+          </div>
+          @if (izvestaj.budzet != null) {
+            <div class="finance-row total-row" [class.negative]="(izvestaj.preostaliButzet ?? 0) < 0">
+              <span>Preostalo</span>
+              <strong>{{ formatCurrency(izvestaj.preostaliButzet) }}</strong>
+            </div>
+          }
+        </div>
+
+        @if (izvestaj.resursi.length > 0) {
+          <div class="resources-breakdown">
+            <h3>Resursi</h3>
+            <div class="resource-list">
+              @for (r of izvestaj.resursi; track r.naziv) {
+                <div class="resource-row">
+                  <div>
+                    <span class="resource-name">{{ r.naziv }}</span>
+                    <span class="resource-tip">{{ r.tip }}</span>
+                  </div>
+                  <div class="resource-right">
+                    @if (r.dodeljenKorisnikuIme) {
+                      <span class="muted-sm">{{ r.dodeljenKorisnikuIme }}</span>
+                    }
+                    <span class="resource-cena">{{ r.cena != null ? (r.cena | number:'1.0-0') + ' RSD' : '—' }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+
+</section>

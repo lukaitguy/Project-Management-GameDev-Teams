@@ -14,11 +14,9 @@
         <a class="btn-create-task" [routerLink]="['/projekti', projekat.id, 'zadaci', 'novi']">
           + Kreiraj zadatak
         </a>
-        @if (isAdmin) {
-          <a class="btn-edit" [routerLink]="['/admin/projekti', projekat.id, 'izmena']">
-            Izmeni projekat
-          </a>
-        }
+        <a class="btn-edit" [routerLink]="['/admin/projekti', projekat.id, 'izmena']">
+          Izmeni projekat
+        </a>
       </div>
     }
   </div>

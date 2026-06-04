@@ -7,7 +7,7 @@
       </p>
     </div>
 
-    @if (isAdmin) {
+    @if (canManage) {
       <a class="create-link" routerLink="/admin/projekti/novi">Novi projekat</a>
     }
   </div>
@@ -59,10 +59,12 @@
             <p><strong>Rok:</strong> {{ projekat.rok ? (projekat.rok | date:'dd.MM.yyyy') : 'Nije definisan' }}</p>
           </div>
 
-          @if (isAdmin) {
+          @if (canManage) {
             <div class="project-actions" (click)="$event.stopPropagation()">
               <a class="edit-link" [routerLink]="['/admin/projekti', projekat.id, 'izmena']">Izmeni</a>
-              <button type="button" class="delete-btn" (click)="obrisiProjekat($event, projekat.id)">Obrisi</button>
+              @if (isAdmin) {
+                <button type="button" class="delete-btn" (click)="obrisiProjekat($event, projekat.id)">Obrisi</button>
+              }
             </div>
           }
         </div>

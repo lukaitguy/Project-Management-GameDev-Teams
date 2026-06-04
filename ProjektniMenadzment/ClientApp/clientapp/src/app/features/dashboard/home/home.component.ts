@@ -35,6 +35,10 @@ export class HomeComponent implements OnInit {
     return this.authService.getCurrentUser()?.isAdmin === true;
   }
 
+  get isPM(): boolean {
+    return this.authService.getCurrentUser()?.isPM === true;
+  }
+
   get korisnickoIme(): string {
     return this.authService.getCurrentUser()?.korisnickoIme ?? 'korisnice';
   }

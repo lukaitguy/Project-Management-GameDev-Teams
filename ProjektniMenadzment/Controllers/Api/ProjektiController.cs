@@ -58,7 +58,7 @@ namespace ProjektniMenadzment.Controllers.Api
         }
 
         [HttpPost]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,ProjektniMenadzer")]
         public async Task<IActionResult> Create([FromBody] CreateProjekatDto projekat)
         {
             var identityUser = await _userManager.GetUserAsync(User);
@@ -79,7 +79,7 @@ namespace ProjektniMenadzment.Controllers.Api
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize(Roles = "Administrator,ProjektniMenadzer")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProjekatDto projekat)
         {
             var result = await _projektiService.UpdateAsync(id, projekat);

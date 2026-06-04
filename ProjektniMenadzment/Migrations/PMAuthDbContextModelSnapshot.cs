@@ -166,17 +166,17 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                         {
                             Id = "881ecb32-8773-4199-8627-05dc87d5a810",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ab3d7dda-7a6b-48ed-ae22-731e92ebafec",
+                            ConcurrencyStamp = "8859d678-66da-43f6-90a7-facdf8f05102",
                             Email = "administrator@pmdb.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMINISTRATOR@PMDB.COM",
-                            NormalizedUserName = "ADMINISTRATOR@PMDB.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAaF5AxNi1eLr2ZSjduMm7GA5Py/5ySccwvRW+L7TWnvFk5knUN1/UlD9Qo9tORrQg==",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKyCMJsApTnlWFqJq66qzo1CDUckQSmbkQo3lEZz3qvfe5/ZJegRkck2eLNygF7FyA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d6eefbc6-b17a-4dc5-bb88-a212d79f6084",
+                            SecurityStamp = "f04d14f0-81e2-470b-a668-c6eee684c231",
                             TwoFactorEnabled = false,
-                            UserName = "administrator@pmdb.com"
+                            UserName = "admin"
                         });
                 });
 

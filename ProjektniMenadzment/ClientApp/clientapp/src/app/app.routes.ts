@@ -11,6 +11,7 @@ import { DashboardLayoutComponent } from './layout/dashboard-layout/dashboard-la
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import { managerGuard } from './core/guards/manager.guard';
 import { MyProjectsComponent } from './features/dashboard/my-projects/my-projects.component';
 import { ProjectDetailsComponent } from './features/dashboard/project-details/project-details.component';
 import { ProjectBuildsComponent } from './features/dashboard/project-builds/project-builds.component';
@@ -28,6 +29,8 @@ import { MyResourcesComponent } from './features/dashboard/my-resources/my-resou
 import { AdminUsersComponent } from './features/dashboard/admin-users/admin-users.component';
 import { AdminCreateUserComponent } from './features/dashboard/admin-create-user/admin-create-user.component';
 import { AdminEditUserComponent } from './features/dashboard/admin-edit-user/admin-edit-user.component';
+import { IzvestajiProjektiComponent } from './features/dashboard/izvestaji-projekti/izvestaji-projekti.component';
+import { IzvestajProjektaComponent } from './features/dashboard/izvestaj-projekta/izvestaj-projekta.component';
 
 
 export const routes: Routes = [
@@ -75,12 +78,22 @@ export const routes: Routes = [
       {
         path: 'admin/projekti/novi',
         component: AddProjectComponent,
-        canActivate: [adminGuard]
+        canActivate: [managerGuard]
       },
       {
         path: 'admin/projekti/:id/izmena',
         component: EditProjectComponent,
-        canActivate: [adminGuard]
+        canActivate: [managerGuard]
+      },
+      {
+        path: 'izvestaji/projekti',
+        component: IzvestajiProjektiComponent,
+        canActivate: [managerGuard]
+      },
+      {
+        path: 'izvestaji/projekti/:id',
+        component: IzvestajProjektaComponent,
+        canActivate: [managerGuard]
       },
       {
         path: 'admin/korisnici',

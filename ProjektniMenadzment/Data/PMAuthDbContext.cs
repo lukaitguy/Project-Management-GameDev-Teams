@@ -50,10 +50,10 @@ namespace ProjektniMenadzment.Data
             var adminId = "881ecb32-8773-4199-8627-05dc87d5a810";
             var adminUser = new IdentityUser
             {
-                UserName = "administrator@pmdb.com",
+                UserName = "admin",
                 Email = "administrator@pmdb.com",
                 NormalizedEmail = "administrator@pmdb.com".ToUpper(),
-                NormalizedUserName = "administrator@pmdb.com".ToUpper(),
+                NormalizedUserName = "admin".ToUpper(),
                 Id = adminId,
             };
 

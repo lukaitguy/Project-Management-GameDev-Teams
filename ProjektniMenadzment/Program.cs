@@ -86,6 +86,7 @@ builder.Services.AddScoped<IKomentariService, KomentariService>();
 builder.Services.AddScoped<IResursiService, ResursiService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAdminKorisniciService, AdminKorisniciService>();
+builder.Services.AddScoped<IIzvestajiService, IzvestajiService>();
 
 var app = builder.Build();
 

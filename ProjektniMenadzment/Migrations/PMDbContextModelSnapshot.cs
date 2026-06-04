@@ -8,7 +8,7 @@ using ProjektniMenadzment.Data;
 
 #nullable disable
 
-namespace ProjektniMenadzment.Data.Migrations.Auth
+namespace ProjektniMenadzment.Data.Migrations.PM
 {
     [DbContext(typeof(PMDbContext))]
     partial class PMDbContextModelSnapshot : ModelSnapshot
@@ -22,56 +22,57 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
+            modelBuilder.Entity("ProjektiZanrovi", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("ProjekatId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ZanrId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ConcurrencyStamp")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("ProjekatId", "ZanrId");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex("ZanrId");
 
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
+                    b.ToTable("ProjektiZanrovi", (string)null);
+                });
 
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
+            modelBuilder.Entity("ProjektniMenadzment.Models.Domain.Buildovi", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<DateTime?>("DatumBuilda")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
 
-                    b.Property<string>("NormalizedEmail")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("NazivBuilda")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("NormalizedUserName")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("PatchNapomene")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("ProjekatId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("TipBuilda")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
+                    b.Property<string>("Verzija")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Id")
+                        .HasName("PK__Buildovi__3214EC0721128050");
 
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
+                    b.HasIndex("ProjekatId");
 
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("IdentityUser");
+                    b.ToTable("Buildovi", (string)null);
                 });
 
             modelBuilder.Entity("ProjektniMenadzment.Models.Domain.ClanoviProjektum", b =>
@@ -83,7 +84,6 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Uloga")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -144,7 +144,7 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("IdentityUserId")
-                        .IsRequired()
+                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Ime")
@@ -158,8 +158,6 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IdentityUserId");
 
                     b.ToTable("Korisnici", (string)null);
                 });
@@ -178,6 +176,17 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                     b.Property<DateTime>("DatumPocetka")
                         .HasColumnType("datetime");
 
+                    b.Property<DateTime?>("DatumPoslednjegBuilda")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("Engine")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("FazaRazvoja")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
                     b.Property<Guid>("KreiraoKorisnikId")
                         .HasColumnType("uniqueidentifier");
 
@@ -190,6 +199,10 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<string>("Platforma")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<DateOnly?>("Rok")
                         .HasColumnType("date");
 
@@ -198,14 +211,13 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<Guid?>("ZanrId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("VerzijaIgre")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("KreiraoKorisnikId");
-
-                    b.HasIndex("ZanrId");
 
                     b.ToTable("Projekti", (string)null);
                 });
@@ -289,11 +301,17 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("TipZadatka")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("DodeljenKorisnikuId");
 
                     b.HasIndex("KreiraoKorisnikId");
+
+                    b.HasIndex("ProjekatId");
 
                     b.ToTable("Zadaci", (string)null);
                 });
@@ -310,7 +328,39 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
 
                     b.HasKey("Id");
 
+                    b.HasIndex(new[] { "Naziv" }, "UQ_Zanrovi_Naziv")
+                        .IsUnique();
+
                     b.ToTable("Zanrovi", (string)null);
+                });
+
+            modelBuilder.Entity("ProjektiZanrovi", b =>
+                {
+                    b.HasOne("ProjektniMenadzment.Models.Domain.Projekti", null)
+                        .WithMany()
+                        .HasForeignKey("ProjekatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_ProjektiZanrovi_Projekti");
+
+                    b.HasOne("ProjektniMenadzment.Models.Domain.Zanrovi", null)
+                        .WithMany()
+                        .HasForeignKey("ZanrId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_ProjektiZanrovi_Zanrovi");
+                });
+
+            modelBuilder.Entity("ProjektniMenadzment.Models.Domain.Buildovi", b =>
+                {
+                    b.HasOne("ProjektniMenadzment.Models.Domain.Projekti", "Projekat")
+                        .WithMany("Buildovis")
+                        .HasForeignKey("ProjekatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("Fk_Buildovi_Projekat");
+
+                    b.Navigation("Projekat");
                 });
 
             modelBuilder.Entity("ProjektniMenadzment.Models.Domain.ClanoviProjektum", b =>
@@ -318,12 +368,14 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                     b.HasOne("ProjektniMenadzment.Models.Domain.Korisnici", "Korisnik")
                         .WithMany("ClanoviProjekta")
                         .HasForeignKey("KorisnikId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_ClanoviProjekta_Korisnici");
 
                     b.HasOne("ProjektniMenadzment.Models.Domain.Projekti", "Projekat")
                         .WithMany("ClanoviProjekta")
                         .HasForeignKey("ProjekatId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_ClanoviProjekta_Projekti");
 
@@ -343,6 +395,7 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                     b.HasOne("ProjektniMenadzment.Models.Domain.Zadaci", "Zadatak")
                         .WithMany("KomentariZadataks")
                         .HasForeignKey("ZadatakId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("FK_KomentariZadatak_Zadaci");
 
@@ -351,33 +404,15 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                     b.Navigation("Zadatak");
                 });
 
-            modelBuilder.Entity("ProjektniMenadzment.Models.Domain.Korisnici", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "IdentityUser")
-                        .WithMany()
-                        .HasForeignKey("IdentityUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("IdentityUser");
-                });
-
             modelBuilder.Entity("ProjektniMenadzment.Models.Domain.Projekti", b =>
                 {
                     b.HasOne("ProjektniMenadzment.Models.Domain.Korisnici", "KreiraoKorisnik")
-                        .WithMany()
-                        .HasForeignKey("KreiraoKorisnikId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ProjektniMenadzment.Models.Domain.Zanrovi", "Zanr")
                         .WithMany("Projektis")
-                        .HasForeignKey("ZanrId")
-                        .HasConstraintName("FK_Projekti_Zanrovi");
+                        .HasForeignKey("KreiraoKorisnikId")
+                        .IsRequired()
+                        .HasConstraintName("FK_Projekti_KreiraoKorisnik");
 
                     b.Navigation("KreiraoKorisnik");
-
-                    b.Navigation("Zanr");
                 });
 
             modelBuilder.Entity("ProjektniMenadzment.Models.Domain.Resursi", b =>
@@ -385,11 +420,13 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                     b.HasOne("ProjektniMenadzment.Models.Domain.Korisnici", "DodeljenKorisnikuNavigation")
                         .WithMany("Resursis")
                         .HasForeignKey("DodeljenKorisniku")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_Resursi_Korisnici");
 
                     b.HasOne("ProjektniMenadzment.Models.Domain.Projekti", "Projekat")
                         .WithMany("Resursis")
                         .HasForeignKey("ProjekatId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("FK_Resursi_Projekti");
 
                     b.Navigation("DodeljenKorisnikuNavigation");
@@ -410,9 +447,18 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                         .IsRequired()
                         .HasConstraintName("FK_Zadaci_Korisnici1");
 
+                    b.HasOne("ProjektniMenadzment.Models.Domain.Projekti", "Projekat")
+                        .WithMany("Zadacis")
+                        .HasForeignKey("ProjekatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Zadaci_Projekat");
+
                     b.Navigation("DodeljenKorisniku");
 
                     b.Navigation("KreiraoKorisnik");
+
+                    b.Navigation("Projekat");
                 });
 
             modelBuilder.Entity("ProjektniMenadzment.Models.Domain.Korisnici", b =>
@@ -420,6 +466,8 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                     b.Navigation("ClanoviProjekta");
 
                     b.Navigation("KomentariZadataks");
+
+                    b.Navigation("Projektis");
 
                     b.Navigation("Resursis");
 
@@ -430,19 +478,18 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
 
             modelBuilder.Entity("ProjektniMenadzment.Models.Domain.Projekti", b =>
                 {
+                    b.Navigation("Buildovis");
+
                     b.Navigation("ClanoviProjekta");
 
                     b.Navigation("Resursis");
+
+                    b.Navigation("Zadacis");
                 });
 
             modelBuilder.Entity("ProjektniMenadzment.Models.Domain.Zadaci", b =>
                 {
                     b.Navigation("KomentariZadataks");
-                });
-
-            modelBuilder.Entity("ProjektniMenadzment.Models.Domain.Zanrovi", b =>
-                {
-                    b.Navigation("Projektis");
                 });
 #pragma warning restore 612, 618
         }

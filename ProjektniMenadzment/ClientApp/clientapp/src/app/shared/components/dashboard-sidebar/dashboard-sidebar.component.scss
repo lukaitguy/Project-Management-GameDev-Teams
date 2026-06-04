@@ -67,6 +67,17 @@
   color: white;
 }
 
+.sidebar-nav a.manager-link {
+  background-color: rgba(99, 102, 241, 0.16);
+  color: #c7d2fe;
+}
+
+.sidebar-nav a.manager-link:hover,
+.sidebar-nav a.manager-link.active {
+  background-color: #6366f1;
+  color: white;
+}
+
 .sidebar-nav a.admin-link {
   background-color: rgba(245, 158, 11, 0.16);
   color: #fde68a;

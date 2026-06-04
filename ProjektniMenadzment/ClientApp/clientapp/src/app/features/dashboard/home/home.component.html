@@ -8,7 +8,7 @@
 
     <div class="hero-actions">
       <a class="primary-action" routerLink="/moji-projekti">Moji projekti</a>
-      @if (isAdmin) {
+      @if (isAdmin || isPM) {
         <a class="secondary-action" routerLink="/admin/projekti/novi">Novi projekat</a>
       }
     </div>
