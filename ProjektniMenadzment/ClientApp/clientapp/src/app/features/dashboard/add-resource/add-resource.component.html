@@ -1,0 +1,76 @@
+<section class="add-resource-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Novi resurs</h1>
+      <p>Kreiranje novog resursa za projekat.</p>
+    </div>
+    <div class="header-actions">
+      <a class="back-link" [routerLink]="['/projekti', projekatId, 'resursi']">
+        Nazad na resurse
+      </a>
+    </div>
+  </div>
+
+  @if (greska) {
+    <div class="error-message">{{ greska }}</div>
+  }
+
+  <div class="form-card">
+
+    <div class="form-group">
+      <label>Naziv *</label>
+      <input type="text" [(ngModel)]="form.naziv" maxlength="200" />
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Tip *</label>
+        <select [(ngModel)]="form.tip">
+          <option value="">-- Izaberi tip --</option>
+          @for (t of tipoviResursa; track t) {
+            <option [value]="t">{{ t }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Cena (RSD)</label>
+        <input type="number" [(ngModel)]="form.cena" min="0" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Dodeli članu</label>
+      @if (ucitavanjeClanova) {
+        <p class="loading-text">Učitavanje članova...</p>
+      } @else {
+        <select [(ngModel)]="form.dodeljenKorisniku">
+          <option [value]="null">-- Nije dodeljeno --</option>
+          @for (c of clanovi; track c.korisnikId) {
+            <option [value]="c.korisnikId">
+              {{ c.ime }} {{ c.prezime }}
+              @if (c.uloga) { ({{ c.uloga }}) }
+            </option>
+          }
+        </select>
+      }
+    </div>
+
+    <div class="form-group">
+      <label>Opis</label>
+      <textarea [(ngModel)]="form.opis" rows="4"></textarea>
+    </div>
+
+    <div class="form-actions">
+      <a class="btn-secondary" [routerLink]="['/projekti', projekatId, 'resursi']">
+        Otkaži
+      </a>
+      <button class="btn-primary" (click)="sacuvaj()">
+        Kreiraj resurs
+      </button>
+    </div>
+
+  </div>
+
+</section>

@@ -31,6 +31,7 @@ import { AdminCreateUserComponent } from './features/dashboard/admin-create-user
 import { AdminEditUserComponent } from './features/dashboard/admin-edit-user/admin-edit-user.component';
 import { IzvestajiProjektiComponent } from './features/dashboard/izvestaji-projekti/izvestaji-projekti.component';
 import { IzvestajProjektaComponent } from './features/dashboard/izvestaj-projekta/izvestaj-projekta.component';
+import { AddResourceComponent } from './features/dashboard/add-resource/add-resource.component';
 
 
 export const routes: Routes = [
@@ -71,6 +72,7 @@ export const routes: Routes = [
       { path: 'projekti/:id/buildovi/novi', component: AddBuildComponent },
       { path: 'projekti/:id/clanovi', component: ProjectMembersPageComponent },
       { path: 'projekti/:id/resursi', component: ProjectResourcesComponent },
+      { path: 'projekti/:id/resursi/novi', component: AddResourceComponent, canActivate: [managerGuard] },
       { path: 'projekti/:id/zadaci', component: ProjectTasksPageComponent },
       { path: 'projekti/:id/zadaci/novi', component: AddTaskComponent, canActivate: [adminGuard] },
       { path: 'projekti/:id/zadaci/:zadatakId', component: TaskDetailsComponent },

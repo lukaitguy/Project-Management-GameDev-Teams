@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ResursiService } from '../../../core/services/resursi.service';
 import { ClanoviService } from '../../../core/services/clanovi.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -12,7 +12,7 @@ import { ClanProjekta } from '../../../core/models/clan-projekta.model';
 @Component({
   selector: 'app-project-resources',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './project-resources.component.html',
   styleUrl: './project-resources.component.scss'
 })
@@ -21,14 +21,13 @@ export class ProjectResourcesComponent implements OnInit {
   projekatId!: string;
   resursi: Resurs[] = [];
   clanovi: ClanProjekta[] = [];
-  isAdmin = false;
   ucitavanje = true;
   greska: string | null = null;
 
-  showForm = false;
+  showEditForm = false;
   editingId: string | null = null;
 
-  tipoviResursa = ['Hardware', 'Software', 'Licenca', 'Alat', 'Ostalo'];
+  tipoviResursa = ['Software', 'Hardware', 'Drugo'];
 
   form: CreateResurs = this.initForm();
 
@@ -39,9 +38,20 @@ export class ProjectResourcesComponent implements OnInit {
     private authService: AuthService
   ) {}
 
+  get isAdmin(): boolean {
+    return this.authService.getCurrentUser()?.isAdmin === true;
+  }
+
+  get isPM(): boolean {
+    return this.authService.getCurrentUser()?.isPM === true;
+  }
+
+  get canManage(): boolean {
+    return this.isAdmin || this.isPM;
+  }
+
   ngOnInit(): void {
     this.projekatId = this.route.snapshot.paramMap.get('id')!;
-    this.isAdmin = this.authService.getCurrentUser()?.isAdmin ?? false;
     this.ucitajResurse();
     this.ucitajClanove();
   }
@@ -62,28 +72,7 @@ export class ProjectResourcesComponent implements OnInit {
   ucitajClanove(): void {
     this.clanoviService.getByProjekatId(this.projekatId).subscribe({
       next: (data) => this.clanovi = data,
-      error: () => { this.greska = 'Greška pri učitavanju članova projekta.'; }
-    });
-  }
-
-  sacuvajResurs(): void {
-    if (!this.form.naziv || !this.form.tip) {
-      this.greska = 'Naziv i tip su obavezni.';
-      return;
-    }
-
-    const request = this.editingId
-      ? this.resursiService.update(this.projekatId, this.editingId, this.form)
-      : this.resursiService.create(this.projekatId, this.form);
-
-    request.subscribe({
-      next: () => {
-        this.resetForm();
-        this.ucitajResurse();
-      },
-      error: (err) => {
-        this.greska = err.error?.message ?? 'Greška pri čuvanju resursa.';
-      }
+      error: () => {}
     });
   }
 
@@ -96,8 +85,28 @@ export class ProjectResourcesComponent implements OnInit {
       cena: resurs.cena,
       dodeljenKorisniku: resurs.dodeljenKorisniku
     };
-    this.showForm = true;
+    this.showEditForm = true;
     this.greska = null;
+  }
+
+  sacuvajIzmenu(): void {
+    if (!this.form.naziv || !this.form.tip) {
+      this.greska = 'Naziv i tip su obavezni.';
+      return;
+    }
+    this.resursiService.update(this.projekatId, this.editingId!, this.form).subscribe({
+      next: () => {
+        this.resetForm();
+        this.ucitajResurse();
+      },
+      error: (err) => {
+        this.greska = err.error?.message ?? 'Greška pri čuvanju resursa.';
+      }
+    });
+  }
+
+  otkaziIzmenu(): void {
+    this.resetForm();
   }
 
   obrisiResurs(id: string): void {
@@ -108,29 +117,14 @@ export class ProjectResourcesComponent implements OnInit {
     });
   }
 
-  toggleForm(): void {
-    if (this.showForm) {
-      this.resetForm();
-    } else {
-      this.showForm = true;
-      this.greska = null;
-    }
-  }
-
   private resetForm(): void {
-    this.showForm = false;
+    this.showEditForm = false;
     this.editingId = null;
     this.form = this.initForm();
     this.greska = null;
   }
 
   private initForm(): CreateResurs {
-    return {
-      naziv: '',
-      tip: '',
-      opis: null,
-      cena: null,
-      dodeljenKorisniku: null
-    };
+    return { naziv: '', tip: '', opis: null, cena: null, dodeljenKorisniku: null };
   }
 }
