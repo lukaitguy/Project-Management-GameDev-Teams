@@ -1,0 +1,72 @@
+﻿@using ProjektniMenadzment.Models.ViewModels
+
+@model KorisniciViewModel
+@{
+    var roles = (List<string>)ViewBag.AllRoles;
+}
+
+<h2>Uredi korisnika</h2>
+
+<form method="post">
+    <input type="hidden" asp-for="IdentityUserId" />
+    <input type="hidden" asp-for="Id" />
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Username</label>
+            <input class="form-control" asp-for="UserName" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Email</label>
+            <input class="form-control" asp-for="Email" />
+        </div>
+        <div class="col-md-4 d-flex align-items-end">
+            <a asp-action="ChangePassword" asp-route-id="@Model.IdentityUserId" class="btn btn-outline-secondary">Promeni lozinku</a>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Ime</label>
+            <input class="form-control" asp-for="Ime" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Prezime</label>
+            <input class="form-control" asp-for="Prezime" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Telefon</label>
+            <input class="form-control" asp-for="BrojTelefona" />
+        </div>
+
+        <div class="col-12">
+            <label class="form-label">Biografija</label>
+            <textarea class="form-control" asp-for="Biografija" rows="3"></textarea>
+        </div>
+
+        <div class="col-12">
+            <label class="form-label d-block">Uloge</label>
+            @foreach (var r in roles)
+            {
+                var checkedRole = Model.Roles.Contains(r);
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="Roles" value="@r" @(checkedRole ? "checked" : "") id="role_@r" />
+                    <label class="form-check-label" for="role_@r">@r</label>
+                </div>
+            }
+        </div>
+
+        <div class="col-12 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Sacuvaj</button>
+            <a asp-action="Index" class="btn btn-outline-secondary">Nazad</a>
+
+            @if (!Model.isLinked)
+            {
+                <form asp-action="LinkAppUser" method="post" class="d-inline">
+                    <input type="hidden" name="IdentityUserId" value="@Model.IdentityUserId" />
+                    <input type="hidden" name="Email" value="@Model.Email" />
+                    <button class="btn btn-warning">Kreiraj App korisnika</button>
+                </form>
+            }
+        </div>
+    </div>
+</form>
+

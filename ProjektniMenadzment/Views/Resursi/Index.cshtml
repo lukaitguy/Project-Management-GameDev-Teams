@@ -1,0 +1,56 @@
+﻿@using ProjektniMenadzment.Models.ViewModels;
+@model List<ResursiViewModel>
+@{
+	ViewData["Title"] = "Resursi";
+}
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<h2>Resursi</h2>
+			<a href="@Url.Action("Create", "Resursi")" class="btn btn-dark mb-3">Kreiraj novi resurs</a>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<table class="table table-striped mt-3">
+				<thead>
+					<tr>
+						<th>Naziv</th>
+						<th>Tip</th>
+						<th>Opis</th>
+						<th>Cena</th>
+						<th>Dodeljen korisniku</th>
+						<th>Projekat</th>
+						<th>Akcije</th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var resurs in Model)
+					{
+						<tr>
+							<td>@resurs.Naziv</td>
+							<td>@resurs.Tip</td>
+							<td>@resurs.Opis</td>
+							<td>@resurs.Cena.ToString()</td>
+							<td>@resurs.DodeljenKorisniku</td>
+							<td>@resurs.Projekat</td>
+							<td>
+								<div class="d-flex gap-1">
+									<a href="@Url.Action("Details", "Resursi", new { id = resurs.Id })" class="btn btn-dark btn-sm">Pregled</a>
+									<a href="@Url.Action("Edit", "Resursi", new { id = resurs.Id })" class="btn btn-primary btn-sm">Uredi</a>
+									<form asp-action="Delete" asp-route-id="@resurs.Id" method="post" onsubmit="return confirm('Da li ste sigurni da zelite da obrisete resurs?');" style="display:inline;">
+										<button type="submit" class="btn btn-danger btn-sm">Obrisi</button>
+									</form>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

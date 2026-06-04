@@ -1,0 +1,315 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ProjektniMenadzment.Models.ViewModels
+@inject SignInManager<IdentityUser> SignInManager
+@model ZadaciViewModel
+
+@{
+    ViewData["Title"] = "Detalji zadatka";
+
+    bool isAdminOrPM = User.IsInRole("Administrator") || User.IsInRole("ProjektniMenadzer");
+
+    var danas = DateOnly.FromDateTime(DateTime.Now);
+    bool hasDeadline = Model.Rok.HasValue;
+    bool isLate = hasDeadline && Model.Status != "Zavrsen" && Model.Rok!.Value < danas;
+
+    string StatusBadge(string s) => s switch
+    {
+        "Nije zapocet" => "bg-secondary",
+        "U toku" => "bg-info text-dark",
+        "Pauziran" => "bg-warning text-dark",
+        "Otkazan" => "bg-danger",
+        "Zavrsen" => "bg-success",
+        _ => "bg-light text-dark"
+    };
+
+    string PrioritetBadge(string p) => p switch
+    {
+        "Nizak" => "bg-success",
+        "Srednji" => "bg-warning text-dark",
+        "Visok" => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
+
+<style>
+    .card-soft {
+    border: 1px solid rgba(0,0,0,.06);
+    border-radius: 1rem;
+    box-shadow: 0 10px 28px rgba(0,0,0,.06);
+    }
+
+    .chip {
+    display: inline-block;
+    padding: .15rem .5rem;
+    border-radius: 999px;
+    background: #f1f5f9;
+    font-size: .8rem;
+    }
+
+    .muted {
+    color: #6b7280;
+    }
+
+    .table-kv th {
+    width: 180px;
+    }
+
+    .actions .btn {
+    min-width: 96px;
+    }
+
+    .desc-box {
+    white-space: pre-wrap;
+    }
+</style>
+
+<div class="container my-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="muted">
+            <a class="text-decoration-none" asp-controller="Projekti" asp-action="Details" asp-route-id="@ViewBag.ProjekatId">← Nazad na projekat</a>
+        </div>
+        <div class="muted">ID: @Model.Id</div>
+    </div>
+
+    <div class="card card-soft p-3 mb-3">
+        <div class="d-flex flex-wrap align-items-start justify-content-between">
+            <div class="me-3">
+                <h2 class="mb-1">🧩 @Model.Naslov</h2>
+                <div class="d-flex flex-wrap gap-2">
+                    <span class="badge @StatusBadge(Model.Status)">@Model.Status</span>
+                    <span class="badge @PrioritetBadge(Model.Prioritet)">@Model.Prioritet</span>
+                    <span class="chip"><strong>Rok:</strong> @(Model.Rok?.ToString("dd.MM.yyyy") ?? "—")</span>
+                    @if (isLate)
+                    {
+                        <span class="chip text-danger">kasni</span>
+                    }
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 actions">
+                @if (isAdminOrPM)
+                {
+                    <a class="btn btn-dark" asp-action="Edit" asp-route-id="@Model.Id">Uredi</a>
+                    <form asp-action="Delete" method="post" class="d-inline"
+                    onsubmit="return confirm('Obrisati zadatak?');">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button class="btn btn-outline-danger">Obrisi</button>
+                    </form>
+                }
+                else
+                {
+                    @* obican korisnik *@
+                    @if (Model.DodeljenKorisnikuIme == "Nije dodeljen")
+                    {
+                        <a class="btn btn-dark" asp-action="Claim" asp-route-zadatakId="@Model.Id">Preuzmi</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-secondary" asp-controller="Projekti" asp-action="Details" asp-route-id="@ViewBag.ProjekatId">Projekat</a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- KPI KARTICE -->
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-md-3">
+            <div class="card card-soft p-3 h-100">
+                <div class="muted">Status</div>
+                <div class="h5 mb-0"><span class="badge @StatusBadge(Model.Status)">@Model.Status</span></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card card-soft p-3 h-100">
+                <div class="muted">Prioritet</div>
+                <div class="h5 mb-0"><span class="badge @PrioritetBadge(Model.Prioritet)">@Model.Prioritet</span></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card card-soft p-3 h-100">
+                <div class="muted">Rok</div>
+                <div class="h5 mb-0 @(isLate?"text-danger fw-semibold":"")">@(Model.Rok?.ToString("dd.MM.yyyy") ?? "—")</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card card-soft p-3 h-100">
+                <div class="muted">Kreiran</div>
+                <div class="h5 mb-0">@Model.DatumKreiranja.ToString("dd.MM.yyyy HH:mm")</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GLAVNI GRID -->
+    <div class="row g-3">
+
+        <!-- LEVO: DETALJI -->
+        <div class="col-lg-7">
+            <div class="card card-soft p-3 mb-3">
+                <h5 class="mb-2">Opis zadatka</h5>
+                <div class="desc-box muted">@(!string.IsNullOrWhiteSpace(Model.Opis) ? Model.Opis : "—")</div>
+            </div>
+
+            <div class="card card-soft p-3">
+                <h5 class="mb-2">Detalji</h5>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-kv mb-0">
+                        <tbody>
+                            <tr>
+                                <th>Projekat</th>
+                                <td>
+                                    <a asp-controller="Projekti" asp-action="Details" asp-route-id="@ViewBag.ProjekatId">
+                                        @ViewBag.NazivProjekta
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Dodeljen korisniku</th>
+                                <td>@Model.DodeljenKorisnikuIme</td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td><span class="badge @StatusBadge(Model.Status)">@Model.Status</span></td>
+                            </tr>
+                            <tr>
+                                <th>Prioritet</th>
+                                <td><span class="badge @PrioritetBadge(Model.Prioritet)">@Model.Prioritet</span></td>
+                            </tr>
+                            <tr>
+                                <th>Rok</th>
+                                <td class="@(isLate?"text-danger fw-semibold":"")">@((Model.Rok?.ToString("dd.MM.yyyy")) ?? "—") @if (isLate)
+                                    {
+                                        <span class="ms-1 chip">kasni</span>
+                                    }</td>
+                            </tr>
+                            <tr>
+                                <th>Kreiran</th>
+                                <td>@Model.DatumKreiranja.ToString("dd.MM.yyyy HH:mm")</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- DESNO: AKCIJE / BRZE PROMENE -->
+        <div class="col-lg-5">
+            <div class="card card-soft p-3 mb-3">
+                <h5 class="mb-2">Brze akcije</h5>
+
+                @if (isAdminOrPM)
+                {
+                    <div class="d-grid gap-2">
+                        <form asp-action="UpdateStatus" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="zadatakId" value="@Model.Id" />
+                            <input type="hidden" name="noviStatus" value="U toku" />
+                            <button class="btn btn-outline-secondary">Postavi: U toku</button>
+                        </form>
+
+                        <form asp-action="UpdateStatus" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="zadatakId" value="@Model.Id" />
+                            <input type="hidden" name="noviStatus" value="Zavrsen" />
+                            <button class="btn btn-outline-success">Postavi: Zavrsen</button>
+                        </form>
+
+                        <form asp-action="UpdateStatus" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="zadatakId" value="@Model.Id" />
+                            <input type="hidden" name="noviStatus" value="Pauziran" />
+                            <button class="btn btn-outline-warning">Postavi: Pauziran</button>
+                        </form>
+
+                        <form asp-action="UpdateStatus" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="zadatakId" value="@Model.Id" />
+                            <input type="hidden" name="noviStatus" value="Otkazan" />
+                            <button class="btn btn-outline-danger">Postavi: Otkazan</button>
+                        </form>
+
+                        <a class="btn btn-dark" asp-action="Edit" asp-route-id="@Model.Id">Uredi zadatak</a>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="d-grid gap-2">
+                        @if (Model.DodeljenKorisnikuIme == "Nije dodeljen")
+                        {
+                            <a class="btn btn-dark" asp-action="Claim" asp-route-zadatakId="@Model.Id">Preuzmi zadatak</a>
+                        }
+
+                        @if (Model.DodeljenKorisnikuIme != "Nije dodeljen")
+                        {
+                            <form asp-action="UpdateStatus" method="post" class="d-flex gap-2 align-items-end">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="zadatakId" value="@Model.Id" />
+                                <div>
+                                    <label class="form-label">Promeni status</label>
+                                    <select name="noviStatus" class="form-select">
+                                        <option value="U toku" selected="@(Model.Status == "U toku")">U toku</option>
+                                        <option value="Pauziran" selected="@(Model.Status == "Pauziran")">Pauziran</option>
+                                        <option value="Zavrsen" selected="@(Model.Status == "Zavrsen")">Zavrsen</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-primary">Sacuvaj</button>
+                            </form>
+                        }
+
+                        <a class="btn btn-outline-secondary"
+                           asp-controller="Projekti" asp-action="Details" asp-route-id="@ViewBag.ProjekatId">
+                            Nazad na projekat
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <!-- KOMENTARИ -->
+
+            <div class="card card-soft p-3">
+                <div class="card-header">
+                    <h5 class="mb-2">Komentari</h5>
+                    <!-- lista komentara + forma -->
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <form method="post">
+                            <div class="mb-3">
+                                <label for="komentar" class="form-label">Dodaj komentar</label>
+                                <textarea class="form-control" id="komentar" name="komentar" rows="3" asp-for="Komentar" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <button type="submit" class="btn btn-primary">Posalji</button>
+                                <input type="hidden" asp-for="Id"/>
+                            </div>
+                        </form>
+                    }
+                </div>
+                <div class="card-body">
+                    @if(Model.Komentari != null && Model.Komentari.Any())
+                    {
+                        @foreach(var k in Model.Komentari)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div>
+                                        @k.Komentar
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-secondary">@k.Korisnik</span>
+                                        <span class="text-secondary">@k.DatumKreiranja.ToShortDateString()</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    }
+                </div>
+
+            </div>
+           
+        </div>
+    </div>
+
+</div>
