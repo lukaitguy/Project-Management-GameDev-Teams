@@ -97,12 +97,11 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
-
-app.MapGet("/", () => Results.Redirect("/app"));
 app.UseRouting();
 app.UseCors("AllowAngular");
 app.UseAuthentication();
 app.UseAuthorization();
+app.MapGet("/", () => Results.Redirect("/app"));
 app.MapControllers();
 app.MapControllerRoute(
     name: "default",
