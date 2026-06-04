@@ -12,7 +12,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 
 // --- Databases ---
 builder.Services.AddDbContext<PMDbContext>(options =>
@@ -104,9 +104,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapGet("/", () => Results.Redirect("/app"));
 app.MapControllers();
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapFallbackToFile("/app/{*path:nonfile}", "app/index.html");
 
 app.Run();
