@@ -60,7 +60,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular", policy =>
-        policy.WithOrigins("https://localhost:4200")
+        policy.WithOrigins("http://localhost:5217", "http://localhost:4200", "https://localhost:4200")
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
@@ -96,7 +96,6 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.MapGet("/", () => Results.Redirect("/app"));
