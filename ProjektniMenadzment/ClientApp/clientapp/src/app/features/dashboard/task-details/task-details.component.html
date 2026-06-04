@@ -62,6 +62,7 @@
 
       <div class="detail-card">
         <h3>Status i dodela</h3>
+
         <div class="detail-list">
           <div class="detail-item">
             <span class="label">Trenutni status</span>
@@ -71,27 +72,56 @@
           </div>
           <div class="detail-item">
             <span class="label">Dodeljeno</span>
-            <span class="value">
-              {{ zadatak.dodeljenKorisnikuIme || 'Nije dodeljeno' }}
-            </span>
+            <span class="value">{{ zadatak.dodeljenKorisnikuIme || 'Nije dodeljeno' }}</span>
           </div>
         </div>
 
-        <div class="status-change">
-          <h4>Promeni status</h4>
-          @if (statusGreska) {
-            <p class="error-text">{{ statusGreska }}</p>
-          }
-          <div class="status-buttons">
-            @for (s of statusi; track s) {
-              <button
-                [class.active]="zadatak.status === s"
-                (click)="promeniStatus(s)">
-                {{ s }}
-              </button>
-            }
+        <!-- Preuzmi: available when task is free and user is a regular member -->
+        @if (mozeDaPreuzme) {
+          <div class="task-action">
+            @if (preuzimGreska) { <p class="error-text">{{ preuzimGreska }}</p> }
+            <button class="btn-take" (click)="preuzmiZadatak()" [disabled]="preuzimanje">
+              {{ preuzimanje ? 'Preuzimanje...' : 'Preuzmi zadatak' }}
+            </button>
           </div>
-        </div>
+        }
+
+        <!-- Status select: visible to the assignee and to admins/PMs -->
+        @if (jeDodeljenMeni || mozeDaUpravlja) {
+          <div class="task-action">
+            <h4>Promeni status</h4>
+            @if (statusGreska) { <p class="error-text">{{ statusGreska }}</p> }
+            <div class="status-select-row">
+              <select [(ngModel)]="odabraniStatus" class="status-select">
+                @for (s of statusi; track s) {
+                  <option [value]="s">{{ s }}</option>
+                }
+              </select>
+              <button
+                class="btn-primary"
+                (click)="promeniStatus()"
+                [disabled]="statusLoading || odabraniStatus === zadatak.status">
+                {{ statusLoading ? '...' : 'Primeni' }}
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Odustani: only for the current assignee -->
+        @if (jeDodeljenMeni) {
+          <div class="task-action">
+            @if (odustaniGreska) { <p class="error-text">{{ odustaniGreska }}</p> }
+            <button class="btn-give-up" (click)="odustaniOdZadatka()" [disabled]="odustajanje">
+              {{ odustajanje ? 'Odustajanje...' : 'Odustani od zadatka' }}
+            </button>
+          </div>
+        }
+
+        <!-- Taken by someone else -->
+        @if (!mozeDaPreuzme && !jeDodeljenMeni && !mozeDaUpravlja && zadatak.dodeljenKorisnikuId) {
+          <p class="no-action-hint">Zadatak je preuzeo drugi korisnik.</p>
+        }
+
       </div>
 
     </div>

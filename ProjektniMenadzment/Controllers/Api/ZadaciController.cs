@@ -78,6 +78,34 @@ namespace ProjektniMenadzment.Controllers.Api
             return NoContent();
         }
 
+        [HttpPatch("{id}/preuzmi")]
+        [Authorize]
+        public async Task<IActionResult> Preuzmi(Guid projekatId, Guid id)
+        {
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
+                return Unauthorized(new { message = "Korisnik nije prijavljen." });
+
+            var result = await _zadaciService.PreuzmiZadatakAsync(id, identityUser.Id);
+            if (!result.Success)
+                return HandleFailure(result.Message);
+            return NoContent();
+        }
+
+        [HttpPatch("{id}/odustani")]
+        [Authorize]
+        public async Task<IActionResult> Odustani(Guid projekatId, Guid id)
+        {
+            var identityUser = await _userManager.GetUserAsync(User);
+            if (identityUser == null)
+                return Unauthorized(new { message = "Korisnik nije prijavljen." });
+
+            var result = await _zadaciService.OdustaniOdZadatkaAsync(id, identityUser.Id);
+            if (!result.Success)
+                return HandleFailure(result.Message);
+            return NoContent();
+        }
+
         [HttpPatch("{id}/dodeli")]
         [Authorize(Roles = "Administrator,ProjektniMenadzer")]
         public async Task<IActionResult> Dodeli(Guid projekatId, Guid id, [FromBody] Guid korisnikId)

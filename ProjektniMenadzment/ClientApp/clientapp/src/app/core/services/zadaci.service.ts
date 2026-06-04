@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { MojZadatak } from '../models/moj-zadatak.model';
 import { Zadatak } from '../models/zadatak.model';
 import { ZadatakDetails } from '../models/zadatak-details.model';
 import { CreateZadatak } from '../models/create-zadatak.model';
@@ -12,6 +13,10 @@ import { CreateZadatak } from '../models/create-zadatak.model';
 export class ZadaciService {
 
   constructor(private http: HttpClient) {}
+
+  getMojiZadaci(): Observable<MojZadatak[]> {
+    return this.http.get<MojZadatak[]>('/api/zadaci/moji');
+  }
 
   getByProjekatId(projekatId: string): Observable<Zadatak[]> {
     return this.http.get<Zadatak[]>(`/api/projekti/${projekatId}/zadaci`);
@@ -36,11 +41,12 @@ export class ZadaciService {
     );
   }
 
-  dodeli(projekatId: string, id: string, korisnikId: string): Observable<void> {
-    return this.http.patch<void>(
-      `/api/projekti/${projekatId}/zadaci/${id}/dodeli`,
-      korisnikId
-    );
+  preuzmi(projekatId: string, id: string): Observable<void> {
+    return this.http.patch<void>(`/api/projekti/${projekatId}/zadaci/${id}/preuzmi`, {});
+  }
+
+  odustani(projekatId: string, id: string): Observable<void> {
+    return this.http.patch<void>(`/api/projekti/${projekatId}/zadaci/${id}/odustani`, {});
   }
 
   delete(projekatId: string, id: string): Observable<void> {

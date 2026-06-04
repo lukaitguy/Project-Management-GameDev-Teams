@@ -6,14 +6,12 @@ import { ProjektiService } from '../../../core/services/projekti.service';
 import { ProjekatDetails } from '../../../core/models/projekat-details.model';
 import { BuildoviService } from '../../../core/services/buildovi.service';
 import { Build } from '../../../core/models/build.model';
-import { ClanProjekta } from '../../../core/models/clan-projekta.model';
 import { ProjectMembersComponent } from '../project-members/project-members.component';
-import { ProjectTasksComponent } from '../project-tasks/project-tasks.component';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-project-details',
-  imports: [CommonModule, RouterLink, ProjectMembersComponent, ProjectTasksComponent],
+  imports: [CommonModule, RouterLink, ProjectMembersComponent],
   templateUrl: './project-details.component.html',
   styleUrl: './project-details.component.scss'
 })
@@ -25,10 +23,22 @@ export class ProjectDetailsComponent implements OnInit {
   loadingBuildovi = false;
   greskaBuildovi = '';
   isAdmin = false;
+  isPM = false;
 
-  // Passed from members component to tasks component
-  // so tasks can populate the "assign to" dropdown
-  clanovi: ClanProjekta[] = [];
+  get canManage(): boolean {
+    return this.isAdmin || this.isPM;
+  }
+
+  get statusClass(): string {
+    switch (this.projekat?.status?.toLowerCase()) {
+      case 'aktivan':      return 'status-aktivan';
+      case 'završen':
+      case 'zavrsen':      return 'status-zavrsen';
+      case 'pauziran':     return 'status-pauziran';
+      case 'otkazan':      return 'status-otkazan';
+      default:             return 'status-default';
+    }
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -38,7 +48,9 @@ export class ProjectDetailsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.isAdmin = this.authService.getCurrentUser()?.isAdmin ?? false;
+    const user = this.authService.getCurrentUser();
+    this.isAdmin = user?.isAdmin ?? false;
+    this.isPM = user?.isPM ?? false;
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
 
@@ -68,8 +80,4 @@ export class ProjectDetailsComponent implements OnInit {
     });
   }
 
-  // Called by project-members via (clanoviLoaded) output event
-  onClanoviLoaded(clanovi: ClanProjekta[]): void {
-    this.clanovi = clanovi;
-  }
 }

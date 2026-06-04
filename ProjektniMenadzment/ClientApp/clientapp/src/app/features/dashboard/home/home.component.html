@@ -1,18 +1,13 @@
 <section class="dashboard-home">
   <div class="hero-card">
     <div class="hero-copy">
-      <span class="eyebrow">{{ isAdmin ? 'Administratorski pregled' : 'Licni pregled rada' }}</span>
+      <span class="eyebrow">{{ isAdmin ? 'Administratorski pregled' : 'Licni pregled' }}</span>
       <h1>Zdravo, {{ korisnickoIme }}</h1>
-      <p>
-        Ovde imas brz pregled projekata, rokova i aktivnosti koje trenutno najvise traze paznju.
-      </p>
+      <p>Pregled tvojih projekata, zadataka i resursa.</p>
     </div>
 
     <div class="hero-actions">
-      <a class="primary-action" routerLink="/moji-projekti">
-        {{ isAdmin ? 'Upravljaj projektima' : 'Otvori moje projekte' }}
-      </a>
-
+      <a class="primary-action" routerLink="/moji-projekti">Moji projekti</a>
       @if (isAdmin) {
         <a class="secondary-action" routerLink="/admin/projekti/novi">Novi projekat</a>
       }
@@ -20,8 +15,8 @@
   </div>
 
   @if (loading) {
-    <div class="panel">
-      <p>Ucitavanje dashboard podataka...</p>
+    <div class="panel loading-panel">
+      <p>Ucitavanje podataka...</p>
     </div>
   }
 
@@ -32,42 +27,25 @@
   }
 
   @if (!loading && !greska) {
-    <div class="stats-grid">
-      @for (card of cards; track card.label) {
-        <article class="stat-card">
-          <span class="stat-label">{{ card.label }}</span>
-          <strong class="stat-value">{{ card.value }}</strong>
-          <p>{{ card.note }}</p>
-        </article>
-      }
-    </div>
-
     <div class="content-grid">
+
       <article class="panel">
         <div class="panel-header">
-          <div>
-            <h2>Projekti za fokus</h2>
-            <p>Najrelevantniji projekti po roku i datumu pocetka.</p>
-          </div>
-
+          <h2>Projekti</h2>
           <a routerLink="/moji-projekti">Vidi sve</a>
         </div>
 
-        @if (istaknutiProjekti.length === 0) {
-          <p class="empty-copy">Trenutno nema projekata za prikaz.</p>
+        @if (projekti.length === 0) {
+          <p class="empty-copy">Nisi clanom nijednog projekta.</p>
         } @else {
-          <div class="project-list">
-            @for (projekat of istaknutiProjekti; track projekat.id) {
-              <a class="project-row" [routerLink]="['/projekti', projekat.id]">
-                <div>
-                  <h3>{{ projekat.naziv }}</h3>
-                  <p>{{ projekat.fazaRazvoja || 'Faza razvoja nije definisana.' }}</p>
+          <div class="item-list">
+            @for (projekat of projekti; track projekat.id) {
+              <a class="item-row" [routerLink]="['/projekti', projekat.id]">
+                <div class="item-main">
+                  <span class="item-title">{{ projekat.naziv }}</span>
+                  <span class="item-sub">{{ projekat.fazaRazvoja || projekat.platforma || '—' }}</span>
                 </div>
-
-                <div class="project-meta">
-                  <span class="status-pill">{{ projekat.status }}</span>
-                  <small>Rok: {{ formatDate(projekat.rok) }}</small>
-                </div>
+                <span class="status-pill">{{ projekat.status }}</span>
               </a>
             }
           </div>
@@ -76,29 +54,52 @@
 
       <article class="panel">
         <div class="panel-header">
-          <div>
-            <h2>Potrebna paznja</h2>
-            <p>Aktivni projekti ciji je rok vec probijen.</p>
-          </div>
+          <h2>Moji zadaci</h2>
+          <a routerLink="/moji-zadaci">Vidi sve</a>
         </div>
 
-        @if (kasneciProjekti.length === 0) {
-          <p class="empty-copy">Nema projekata sa probijenim rokom. Dobro napredujete.</p>
+        @if (mojiZadaci.length === 0) {
+          <p class="empty-copy">Nema zadataka dodeljenih tebi.</p>
         } @else {
-          <div class="alert-list">
-            @for (projekat of kasneciProjekti; track projekat.id) {
-              <a class="alert-row" [routerLink]="['/projekti', projekat.id]">
-                <div>
-                  <strong>{{ projekat.naziv }}</strong>
-                  <p>{{ projekat.opis || 'Opis projekta nije dodat.' }}</p>
+          <div class="item-list">
+            @for (zadatak of mojiZadaci; track zadatak.id) {
+              <a class="item-row" [routerLink]="['/projekti', zadatak.projekatId, 'zadaci', zadatak.id]">
+                <div class="item-main">
+                  <span class="item-title">{{ zadatak.naslov }}</span>
+                  <span class="item-sub">{{ zadatak.projekatNaziv }}</span>
                 </div>
-
-                <span>{{ formatDate(projekat.rok) }}</span>
+                <span class="priority-pill priority-{{ zadatak.prioritet | lowercase }}">{{ zadatak.prioritet }}</span>
               </a>
             }
           </div>
         }
       </article>
+
+      <article class="panel">
+        <div class="panel-header">
+          <h2>Moji resursi</h2>
+          <a routerLink="/moji-resursi">Vidi sve</a>
+        </div>
+
+        @if (mojiResursi.length === 0) {
+          <p class="empty-copy">Nema resursa dodeljenih tebi.</p>
+        } @else {
+          <div class="item-list">
+            @for (resurs of mojiResursi; track resurs.id) {
+              <a class="item-row" [routerLink]="['/projekti', resurs.projekatId, 'resursi']">
+                <div class="item-main">
+                  <span class="item-title">{{ resurs.naziv }}</span>
+                  <span class="item-sub">{{ resurs.tip }} · {{ resurs.projekatNaziv }}</span>
+                </div>
+                @if (resurs.cena != null) {
+                  <span class="price-tag">{{ resurs.cena | number:'1.0-0' }} RSD</span>
+                }
+              </a>
+            }
+          </div>
+        }
+      </article>
+
     </div>
   }
 </section>

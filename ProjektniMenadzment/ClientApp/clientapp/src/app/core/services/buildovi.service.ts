@@ -15,7 +15,7 @@ export class BuildoviService {
     return this.http.get<Build[]>(`/api/buildovi/projekat/${projekatId}`);
   }
 
-  create(build: CreateBuild) {
-    return this.http.post('/api/buildovi', build);
+  create(build: CreateBuild): Observable<void> {
+    return this.http.post<void>('/api/buildovi', build);
   }
 }

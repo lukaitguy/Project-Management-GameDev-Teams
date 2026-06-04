@@ -11,5 +11,6 @@ namespace ProjektniMenadzment.Repositories.Interfaces
         Task<Resursi?> GetByIdAsync(Guid id);
         Task<IEnumerable<Resursi>> GetAllAsync();
         Task<IEnumerable<Resursi>> GetByProjekatIdAsync(Guid projekatId);
+        Task<IEnumerable<Resursi>> GetByKorisnikIdAsync(Guid korisnikId);
     }
 }

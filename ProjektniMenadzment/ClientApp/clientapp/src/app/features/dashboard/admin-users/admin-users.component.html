@@ -1,0 +1,85 @@
+<section class="admin-users-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Upravljanje korisnicima</h1>
+      <p>Pregled svih korisnika, dodela uloga i izmena podataka.</p>
+    </div>
+    <a class="btn-create" routerLink="/admin/korisnici/novi">+ Kreiraj korisnika</a>
+  </div>
+
+  <div class="filters">
+    <input
+      type="text"
+      [(ngModel)]="filterSearch"
+      placeholder="Pretraga po imenu ili emailu..."
+      (keyup.enter)="ucitaj()"
+    />
+    <select [(ngModel)]="filterRole" (change)="ucitaj()">
+      <option value="">Sve uloge</option>
+      @for (role of roles; track role) {
+        <option [value]="role">{{ role }}</option>
+      }
+    </select>
+    <button class="btn-search" (click)="ucitaj()">Pretraži</button>
+  </div>
+
+  @if (greska) { <p class="error">{{ greska }}</p> }
+  @if (uspeh)  { <p class="success">{{ uspeh }}</p> }
+  @if (loading) { <p>Ucitavanje...</p> }
+
+  @if (!loading && korisnici.length === 0) {
+    <div class="empty-state"><p>Nema korisnika koji odgovaraju pretrage.</p></div>
+  }
+
+  @if (!loading && korisnici.length > 0) {
+    <div class="users-table-wrap">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Korisnik</th>
+            <th>Email</th>
+            <th>Uloge</th>
+            <th>Projekti</th>
+            <th>Zadaci</th>
+            <th>Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (k of korisnici; track k.identityUserId) {
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <span class="user-name">{{ k.userName }}</span>
+                  @if (k.ime || k.prezime) {
+                    <span class="user-fullname">{{ k.ime }} {{ k.prezime }}</span>
+                  }
+                </div>
+              </td>
+              <td class="email-cell">{{ k.email }}</td>
+              <td>
+                @for (role of k.roles; track role) {
+                  <span class="role-pill" [class]="'role-' + role.toLowerCase()">{{ role }}</span>
+                }
+                @if (k.roles.length === 0) {
+                  <span class="role-pill role-none">—</span>
+                }
+              </td>
+              <td class="count-cell">{{ k.projektiCount }}</td>
+              <td class="count-cell">{{ k.zadaciCount }}</td>
+              <td class="actions-cell">
+                <a class="btn-edit" [routerLink]="['/admin/korisnici', k.identityUserId, 'izmena']">
+                  Izmeni
+                </a>
+                <button class="btn-delete" (click)="obrisi(k.identityUserId, k.userName)">
+                  Obriši
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</section>

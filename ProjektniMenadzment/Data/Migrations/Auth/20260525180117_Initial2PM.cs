@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProjektniMenadzment.Data.Migrations.Auth
 {
     /// <inheritdoc />
-    public partial class InitAuth : Migration
+    public partial class Initial2PM : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -171,7 +171,7 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "881ecb32-8773-4199-8627-05dc87d5a810", 0, "a44155ee-412f-411e-8c01-2fcd6dd70d5f", "administrator@pmdb.com", false, false, null, "ADMINISTRATOR@PMDB.COM", "ADMINISTRATOR@PMDB.COM", "AQAAAAIAAYagAAAAEGJrJ/1pE6jNx6X4IEHpB/IirTO3w5Vjhprre2+StibTftD5X/tShdRtD/X9AI749g==", null, false, "e54cef85-314c-4afd-ba41-4aa4747177af", false, "administrator@pmdb.com" });
+                values: new object[] { "881ecb32-8773-4199-8627-05dc87d5a810", 0, "8859d678-66da-43f6-90a7-facdf8f05102", "administrator@pmdb.com", false, false, null, "ADMINISTRATOR@PMDB.COM", "ADMIN", "AQAAAAIAAYagAAAAEKyCMJsApTnlWFqJq66qzo1CDUckQSmbkQo3lEZz3qvfe5/ZJegRkck2eLNygF7FyA==", null, false, "f04d14f0-81e2-470b-a668-c6eee684c231", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",

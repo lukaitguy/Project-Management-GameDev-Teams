@@ -61,12 +61,15 @@
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+.form-group select {
   border: 1px solid #cbd5e1;
   border-radius: 10px;
   padding: 12px 14px;
   font-size: 15px;
   font-family: inherit;
+  background-color: #fff;
+  color: #0f172a;
 }
 
 .form-actions {

@@ -1,0 +1,51 @@
+<section class="my-resources-page">
+  <div class="page-header">
+    <div>
+      <h1>Moji resursi</h1>
+      <p>Resursi koji su vam dodeljeni na svim projektima.</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <p>Ucitavanje resursa...</p>
+  }
+
+  @if (greska) {
+    <p class="error">{{ greska }}</p>
+  }
+
+  @if (!loading && !greska && resursi.length === 0) {
+    <div class="empty-state">
+      <p>Trenutno nemate dodeljenih resursa.</p>
+    </div>
+  }
+
+  @if (!loading && !greska && resursi.length > 0) {
+    <div class="resources-grid">
+      @for (resurs of resursi; track resurs.id) {
+        <a class="resource-card" [routerLink]="['/projekti', resurs.projekatId, 'resursi']">
+          <div class="resource-card-header">
+            <div>
+              <h3>{{ resurs.naziv }}</h3>
+              <span class="project-tag">{{ resurs.projekatNaziv }}</span>
+            </div>
+            <div class="resource-badges">
+              <span class="tip-pill">{{ resurs.tip }}</span>
+              @if (resurs.cena != null) {
+                <span class="cena-tag">{{ resurs.cena | number:'1.0-0' }} RSD</span>
+              }
+            </div>
+          </div>
+
+          @if (resurs.opis) {
+            <p class="resource-opis">{{ resurs.opis }}</p>
+          }
+
+          <div class="resource-meta">
+            <span class="meta-item">Kreirano: {{ formatDate(resurs.datumKreiranja) }}</span>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</section>

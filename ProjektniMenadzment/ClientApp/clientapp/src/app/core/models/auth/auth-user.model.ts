@@ -3,4 +3,5 @@ export interface AuthUser {
   email: string;
   isAdmin: boolean;
   isPM: boolean;
+  korisnikId?: string | null;
 }

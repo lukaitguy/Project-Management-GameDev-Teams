@@ -6,8 +6,12 @@ import { LoginRequest } from '../models/login-request.model';
 import { AuthUser } from '../models/auth/auth-user.model';
 
 interface LoginResponse {
-  token: string;
-  korisnik: AuthUser;
+  success: boolean;
+  message: string | null;
+  data: {
+    token: string;
+    korisnik: AuthUser;
+  };
 }
 
 @Injectable({
@@ -31,8 +35,8 @@ export class AuthService {
   prijava(data: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>('/api/auth/prijava', data).pipe(
       tap(response => {
-        localStorage.setItem(this.TOKEN_KEY, response.token);
-        this.currentUserSubject.next(response.korisnik);
+        localStorage.setItem(this.TOKEN_KEY, response.data.token);
+        this.currentUserSubject.next(response.data.korisnik);
       })
     );
   }
@@ -58,6 +62,12 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.currentUserSubject.value?.isAdmin ?? false;
+  }
+
+  // Re-reads user from whatever token is currently in localStorage (call after token refresh)
+  refreshUser(): void {
+    const user = this.getUserFromToken();
+    this.currentUserSubject.next(user);
   }
 
   // Called on app startup to rehydrate user state from stored token
@@ -86,7 +96,8 @@ export class AuthService {
         korisnickoIme: payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
         email: payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'],
         isAdmin: this.hasRole(payload, 'Administrator'),
-        isPM: this.hasRole(payload, 'ProjektniMenadzer')
+        isPM: this.hasRole(payload, 'ProjektniMenadzer'),
+        korisnikId: payload['korisnikId'] ?? null
       };
     } catch {
       return null;

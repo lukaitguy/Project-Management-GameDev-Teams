@@ -25,6 +25,16 @@ namespace ProjektniMenadzment.Services
             return ServiceResult<IEnumerable<ZadatakListDto>>.Ok(zadaci.Select(MapToListDto));
         }
 
+        public async Task<ServiceResult<IEnumerable<MojZadatakDto>>> GetMojiZadaciAsync(string identityUserId)
+        {
+            var korisnik = await _korisniciRepository.GetByIdentityUserIdAsync(identityUserId);
+            if (korisnik == null)
+                return ServiceResult<IEnumerable<MojZadatakDto>>.Fail("Korisnik nije pronadjen.");
+
+            var zadaci = await _zadaciRepository.GetByKorisnikIdAsync(korisnik.Id);
+            return ServiceResult<IEnumerable<MojZadatakDto>>.Ok(zadaci.Select(MapToMojZadatakDto));
+        }
+
         public async Task<ServiceResult<ZadatakDetailsDto>> GetByIdAsync(Guid id)
         {
             var zadatak = await _zadaciRepository.GetByIdAsync(id);
@@ -124,6 +134,30 @@ namespace ProjektniMenadzment.Services
                 : ServiceResult<bool>.Fail("Zadatak nije pronadjen.");
         }
 
+        public async Task<ServiceResult<bool>> PreuzmiZadatakAsync(Guid id, string identityUserId)
+        {
+            var korisnik = await _korisniciRepository.GetByIdentityUserIdAsync(identityUserId);
+            if (korisnik == null)
+                return ServiceResult<bool>.Fail("Korisnik nije pronadjen.");
+
+            var uspesno = await _zadaciRepository.PreuzmiAsync(id, korisnik.Id);
+            return uspesno
+                ? ServiceResult<bool>.Ok(true)
+                : ServiceResult<bool>.Fail("Zadatak nije dostupan za preuzimanje.");
+        }
+
+        public async Task<ServiceResult<bool>> OdustaniOdZadatkaAsync(Guid id, string identityUserId)
+        {
+            var korisnik = await _korisniciRepository.GetByIdentityUserIdAsync(identityUserId);
+            if (korisnik == null)
+                return ServiceResult<bool>.Fail("Korisnik nije pronadjen.");
+
+            var uspesno = await _zadaciRepository.OdustaniAsync(id, korisnik.Id);
+            return uspesno
+                ? ServiceResult<bool>.Ok(true)
+                : ServiceResult<bool>.Fail("Niste dodeljeni ovom zadatku.");
+        }
+
         public async Task<ServiceResult<bool>> DeleteAsync(Guid id)
         {
             try
@@ -141,6 +175,24 @@ namespace ProjektniMenadzment.Services
         }
 
         // ── Mappers ──────────────────────────────────────────────
+
+        private static MojZadatakDto MapToMojZadatakDto(Zadaci z) => new()
+        {
+            Id = z.Id,
+            ProjekatId = z.ProjekatId,
+            ProjekatNaziv = z.Projekat.Naziv,
+            Naslov = z.Naslov,
+            Opis = z.Opis,
+            Status = z.Status,
+            Prioritet = z.Prioritet,
+            TipZadatka = z.TipZadatka,
+            Rok = z.Rok,
+            DatumKreiranja = z.DatumKreiranja,
+            DodeljenKorisnikuId = z.DodeljenKorisnikuId,
+            DodeljenKorisnikuIme = z.DodeljenKorisniku != null
+                ? $"{z.DodeljenKorisniku.Ime} {z.DodeljenKorisniku.Prezime}"
+                : null
+        };
 
         private static ZadatakListDto MapToListDto(Zadaci z) => new()
         {

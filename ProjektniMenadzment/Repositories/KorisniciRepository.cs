@@ -43,6 +43,13 @@ namespace ProjektniMenadzment.Repositories
             return korisnik;
         }
 
+        public async Task<Korisnici> UpdateAsync(Korisnici korisnik)
+        {
+            _context.Korisnicis.Update(korisnik);
+            await _context.SaveChangesAsync();
+            return korisnik;
+        }
+
         public async Task<Korisnici?> GetByIdentityUserIdAsync(string identityUserId)
         {
             return await _context.Korisnicis

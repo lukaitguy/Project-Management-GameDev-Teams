@@ -101,7 +101,7 @@
 
               @if (komentariUcitavanje[zadatak.id]) {
                 <p>Učitavanje komentara...</p>
-              } @else if (komentariMap[zadatak.id]?.length === 0) {
+              } @else if (komentariMap[zadatak.id].length === 0) {
                 <p class="empty-state">Nema komentara.</p>
               } @else {
                 <div class="comments-list">

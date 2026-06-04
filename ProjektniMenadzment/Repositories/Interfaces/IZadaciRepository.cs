@@ -11,7 +11,9 @@ namespace ProjektniMenadzment.Repositories.Interfaces
         Task<bool> DeleteAsync(Guid id);
         Task<bool> UpdateStatusAsync(Guid zadatakId, Guid? korisnikId, string noviStatus, bool canManageAll);
 
+        Task<IEnumerable<Zadaci>> GetByKorisnikIdAsync(Guid korisnikId);
         Task<bool> DodeliZadatakAsync(Guid zadatakId, Guid korisnikId);
-
+        Task<bool> PreuzmiAsync(Guid zadatakId, Guid korisnikId);
+        Task<bool> OdustaniAsync(Guid zadatakId, Guid korisnikId);
     }
 }

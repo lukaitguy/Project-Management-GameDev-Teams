@@ -1,167 +1,177 @@
 @if (projekat) {
-  <section class="project-details-page">
+<section class="project-details-page">
 
-    <div class="project-hero">
-      <div class="project-hero-left">
-        <div class="project-badge">Projekat</div>
-        <h1>{{ projekat.naziv }}</h1>
-        <p>{{ projekat.opis || 'Opis projekta nije dodat.' }}</p>
-      </div>
-      <div class="project-hero-right">
-        <span class="status">{{ projekat.status }}</span>
-      </div>
+  <!-- ── Page header ──────────────────────────────────── -->
+  <div class="page-header">
+    <div class="page-header-left">
+      <span class="status-pill" [class]="statusClass">{{ projekat.status }}</span>
+      <h1>{{ projekat.naziv }}</h1>
+      <p class="page-desc">{{ projekat.opis || 'Opis projekta nije dodat.' }}</p>
     </div>
 
-    <div class="details-grid">
-
-      <div class="details-card">
-        <h3>Opšte informacije</h3>
-        <div class="details-list">
-          <div class="details-item">
-            <span class="label">Naziv projekta</span>
-            <span class="value">{{ projekat.naziv }}</span>
-          </div>
-          <div class="details-item">
-            <span class="label">Status</span>
-            <span class="value">{{ projekat.status }}</span>
-          </div>
-          <div class="details-item">
-            <span class="label">Budžet</span>
-            <span class="value">
-              {{ projekat.budzet != null ? (projekat.budzet + ' RSD') : 'Nije definisan' }}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="details-card">
-        <h3>Tehničke informacije</h3>
-        <div class="details-list">
-          <div class="details-item">
-            <span class="label">Verzija igre</span>
-            <span class="value">{{ projekat.verzijaIgre || 'N/A' }}</span>
-          </div>
-          <div class="details-item">
-            <span class="label">Engine</span>
-            <span class="value">{{ projekat.engine || 'N/A' }}</span>
-          </div>
-          <div class="details-item">
-            <span class="label">Platforma</span>
-            <span class="value">{{ projekat.platforma || 'N/A' }}</span>
-          </div>
-          <div class="details-item">
-            <span class="label">Faza razvoja</span>
-            <span class="value">{{ projekat.fazaRazvoja || 'N/A' }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="details-card">
-        <h3>Datumi i praćenje</h3>
-        <div class="details-list">
-          <div class="details-item">
-            <span class="label">Datum početka</span>
-            <span class="value">{{ projekat.datumPocetka | date:'dd.MM.yyyy' }}</span>
-          </div>
-          <div class="details-item">
-            <span class="label">Rok</span>
-            <span class="value">{{ projekat.rok || 'Nije definisan' }}</span>
-          </div>
-          <div class="details-item">
-            <span class="label">Poslednji build</span>
-            <span class="value">
-              {{ projekat.datumPoslednjegBuilda
-                  ? (projekat.datumPoslednjegBuilda | date:'dd.MM.yyyy HH:mm')
-                  : 'Nema podataka' }}
-            </span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="project-sections">
-
-      <!-- Builds -->
-      <div class="section-card">
-        <div class="section-header">
-          <h2>Poslednji Build</h2>
-          <a class="section-link" [routerLink]="['/projekti', projekat.id, 'buildovi']">
-            Pregled
+    @if (canManage) {
+      <div class="page-header-right">
+        <a class="btn-create-task" [routerLink]="['/projekti', projekat.id, 'zadaci', 'novi']">
+          + Kreiraj zadatak
+        </a>
+        @if (isAdmin) {
+          <a class="btn-edit" [routerLink]="['/admin/projekti', projekat.id, 'izmena']">
+            Izmeni projekat
           </a>
-        </div>
-
-        @if (loadingBuildovi) {
-          <p>Učitavanje poslednjeg builda...</p>
-        } @else if (greskaBuildovi) {
-          <p class="error-text">{{ greskaBuildovi }}</p>
-        } @else if (!poslednjiBuild) {
-          <p>Nema evidentiranih buildova za ovaj projekat.</p>
-        } @else {
-          <div class="build-item">
-            <div class="build-top">
-              <div>
-                <h4>{{ poslednjiBuild.verzija }}</h4>
-                <p class="build-name">{{ poslednjiBuild.nazivBuilda || 'Bez naziva builda' }}</p>
-              </div>
-              <span class="build-type">{{ poslednjiBuild.tipBuilda || 'N/A' }}</span>
-            </div>
-            <div class="build-meta">
-              <p>
-                <strong>Datum builda:</strong>
-                {{ poslednjiBuild.datumBuilda
-                    ? (poslednjiBuild.datumBuilda | date:'dd.MM.yyyy HH:mm')
-                    : 'Nije definisan' }}
-              </p>
-            </div>
-            <div class="build-notes">
-              <strong>Patch napomene:</strong>
-              <p>{{ poslednjiBuild.patchNapomene || 'Nema patch napomena.' }}</p>
-            </div>
-          </div>
         }
       </div>
+    }
+  </div>
 
-      <!-- Members — emits loaded members up to parent -->
-      <div class="section-card">
-        <app-project-members
-          [projekatId]="projekat.id"
-          (clanoviLoaded)="onClanoviLoaded($event)">
-        </app-project-members>
-      </div>
+  <!-- ── Info cards ───────────────────────────────────── -->
+  <div class="info-grid">
 
-      <!-- Tasks — receives members for the assign dropdown -->
-      <div class="section-card">
-        <div class="section-header">
-          <h2>Zadaci</h2>
-          <div class="section-actions">
-            @if (isAdmin) {
-              <a class="section-link-green"
-                [routerLink]="['/projekti', projekat.id, 'zadaci', 'novi']">
-                + Novi
-              </a>
-            }
-            <a class="section-link"
-              [routerLink]="['/projekti', projekat.id, 'zadaci']">
-              Pregled
-            </a>
-          </div>
+    <div class="info-card">
+      <h3 class="card-title">Vremenski okvir</h3>
+      <dl class="info-list">
+        <div class="info-row">
+          <dt>Datum početka</dt>
+          <dd>{{ projekat.datumPocetka | date:'dd.MM.yyyy' }}</dd>
         </div>
-        <p>Pregled i upravljanje zadacima projekta.</p>
-      </div>
-
-      <!-- Resources  -->
-      <div class="section-card">
-        <div class="section-header">
-          <h2>Resursi</h2>
-          <a class="section-link" [routerLink]="['/projekti', projekat.id, 'resursi']">
-            Pregled
-          </a>
+        <div class="info-row">
+          <dt>Rok</dt>
+          <dd>{{ projekat.rok ? (projekat.rok | date:'dd.MM.yyyy') : '—' }}</dd>
         </div>
-        <p>Pregled i upravljanje resursima projekta.</p>
-      </div>
-
+        <div class="info-row">
+          <dt>Poslednji build</dt>
+          <dd>{{ projekat.datumPoslednjegBuilda
+                  ? (projekat.datumPoslednjegBuilda | date:'dd.MM.yyyy HH:mm')
+                  : '—' }}</dd>
+        </div>
+      </dl>
     </div>
 
-  </section>
+    <div class="info-card">
+      <h3 class="card-title">Tehničke informacije</h3>
+      <dl class="info-list">
+        <div class="info-row">
+          <dt>Engine</dt>
+          <dd>{{ projekat.engine || '—' }}</dd>
+        </div>
+        <div class="info-row">
+          <dt>Platforma</dt>
+          <dd>{{ projekat.platforma || '—' }}</dd>
+        </div>
+        <div class="info-row">
+          <dt>Verzija igre</dt>
+          <dd>{{ projekat.verzijaIgre || '—' }}</dd>
+        </div>
+        <div class="info-row">
+          <dt>Faza razvoja</dt>
+          <dd>{{ projekat.fazaRazvoja || '—' }}</dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="info-card">
+      <h3 class="card-title">Opšte informacije</h3>
+      <dl class="info-list">
+        <div class="info-row">
+          <dt>Status</dt>
+          <dd><span class="status-pill sm" [class]="statusClass">{{ projekat.status }}</span></dd>
+        </div>
+        @if (canManage) {
+          <div class="info-row">
+            <dt>Budžet</dt>
+            <dd>{{ projekat.budzet != null ? (projekat.budzet | number) + ' RSD' : '—' }}</dd>
+          </div>
+        }
+      </dl>
+    </div>
+
+  </div>
+
+  <!-- ── Section cards ────────────────────────────────── -->
+  <div class="sections-grid">
+
+    <!-- Tasks -->
+    <div class="section-card nav-card">
+      <div class="section-header">
+        <h2>Zadaci</h2>
+        <div class="section-actions">
+          @if (canManage) {
+            <a class="link-btn green" [routerLink]="['/projekti', projekat.id, 'zadaci', 'novi']">
+              + Novi
+            </a>
+          }
+          <a class="link-btn" [routerLink]="['/projekti', projekat.id, 'zadaci']">
+            Pregled →
+          </a>
+        </div>
+      </div>
+      <p class="muted">Prati i upravljaj zadacima i statusima tima.</p>
+    </div>
+
+    <!-- Members widget -->
+    <div class="section-card members-widget">
+      <app-project-members [projekatId]="projekat.id"></app-project-members>
+      @if (canManage) {
+        <a class="link-btn green mt-auto" [routerLink]="['/projekti', projekat.id, 'clanovi']">
+          + Upravljaj članovima
+        </a>
+      }
+    </div>
+
+    <!-- Resources -->
+    <div class="section-card nav-card">
+      <div class="section-header">
+        <h2>Resursi</h2>
+        <a class="link-btn" [routerLink]="['/projekti', projekat.id, 'resursi']">
+          Pregled →
+        </a>
+      </div>
+      <p class="muted">Hardware, softver, licence i drugi resursi projekta.</p>
+    </div>
+
+    <!-- Latest build -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>Poslednji build</h2>
+        <a class="link-btn" [routerLink]="['/projekti', projekat.id, 'buildovi']">
+          Svi buildovi →
+        </a>
+      </div>
+
+      @if (loadingBuildovi) {
+        <p class="muted">Učitavanje...</p>
+      } @else if (greskaBuildovi) {
+        <p class="error-text">{{ greskaBuildovi }}</p>
+      } @else if (!poslednjiBuild) {
+        <p class="muted">Nema evidentiranih buildova.</p>
+        @if (isAdmin) {
+          <a class="link-btn mt" [routerLink]="['/projekti', projekat.id, 'buildovi', 'novi']">
+            + Dodaj build
+          </a>
+        }
+      } @else {
+        <div class="build-card">
+          <div class="build-card-top">
+            <div>
+              <span class="build-version">{{ poslednjiBuild.verzija }}</span>
+              <span class="build-name">{{ poslednjiBuild.nazivBuilda || '' }}</span>
+            </div>
+            @if (poslednjiBuild.tipBuilda) {
+              <span class="tag">{{ poslednjiBuild.tipBuilda }}</span>
+            }
+          </div>
+          <p class="build-date">
+            {{ poslednjiBuild.datumBuilda
+                ? (poslednjiBuild.datumBuilda | date:'dd.MM.yyyy HH:mm')
+                : 'Datum nije dostupan' }}
+          </p>
+          @if (poslednjiBuild.patchNapomene) {
+            <p class="build-notes">{{ poslednjiBuild.patchNapomene }}</p>
+          }
+        </div>
+      }
+    </div>
+
+  </div>
+
+</section>
 }

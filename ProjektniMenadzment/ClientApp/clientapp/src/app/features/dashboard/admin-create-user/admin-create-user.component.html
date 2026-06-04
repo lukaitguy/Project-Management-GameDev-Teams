@@ -1,0 +1,79 @@
+<section class="user-form-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Kreiraj korisnika</h1>
+      <p>Novi nalog sa profilom i ulogama.</p>
+    </div>
+    <a class="back-link" routerLink="/admin/korisnici">Nazad</a>
+  </div>
+
+  <div class="form-card">
+
+    <div class="form-section">
+      <h2>Nalog</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Korisničko ime *</label>
+          <input type="text" [(ngModel)]="form.userName" />
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" [(ngModel)]="form.email" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Lozinka *</label>
+          <input type="password" [(ngModel)]="form.password" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2>Profil</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Ime</label>
+          <input type="text" [(ngModel)]="form.ime" />
+        </div>
+        <div class="form-group">
+          <label>Prezime</label>
+          <input type="text" [(ngModel)]="form.prezime" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Broj telefona</label>
+          <input type="text" [(ngModel)]="form.brojTelefona" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Biografija</label>
+        <textarea rows="3" [(ngModel)]="form.biografija"></textarea>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h2>Uloge</h2>
+      <div class="roles-list">
+        @for (role of roles; track role) {
+          <label class="role-checkbox" [class.selected]="isRoleSelected(role)">
+            <input type="checkbox" [checked]="isRoleSelected(role)" (change)="toggleRole(role)" />
+            {{ role }}
+          </label>
+        }
+      </div>
+    </div>
+
+    @if (greska) { <p class="error">{{ greska }}</p> }
+
+    <div class="form-actions">
+      <button (click)="sacuvaj()" [disabled]="loading">
+        {{ loading ? 'Kreiranje...' : 'Kreiraj korisnika' }}
+      </button>
+    </div>
+
+  </div>
+
+</section>

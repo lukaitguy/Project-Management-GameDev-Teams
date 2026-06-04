@@ -24,7 +24,10 @@
       <div class="form-row">
         <div class="form-group">
           <label for="status">Status</label>
-          <input id="status" type="text" formControlName="status" />
+          <select id="status" formControlName="status">
+            <option value="Aktivan">Aktivan</option>
+            <option value="Otkazan">Otkazan</option>
+          </select>
         </div>
 
         <div class="form-group">
@@ -65,7 +68,12 @@
 
         <div class="form-group">
           <label for="fazaRazvoja">Faza razvoja</label>
-          <input id="fazaRazvoja" type="text" formControlName="fazaRazvoja" />
+          <select id="fazaRazvoja" formControlName="fazaRazvoja">
+            <option value="">-- Izaberi fazu --</option>
+            <option value="Alpha">Alpha</option>
+            <option value="Beta">Beta</option>
+            <option value="Test">Test</option>
+          </select>
         </div>
       </div>
 

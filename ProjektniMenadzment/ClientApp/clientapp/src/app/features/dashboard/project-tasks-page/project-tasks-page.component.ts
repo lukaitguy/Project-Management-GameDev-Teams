@@ -24,12 +24,17 @@ export class ProjectTasksPageComponent implements OnInit {
   loading = false;
   greska = '';
   isAdmin = false;
+  isPM = false;
+
+  get canManage(): boolean {
+    return this.isAdmin || this.isPM;
+  }
 
   filterStatus = '';
   filterPrioritet = '';
 
   statusi = ['Nije zapocet', 'U toku', 'Pauziran', 'Otkazan', 'Zavrsen'];
-  prioriteti = ['Nizak', 'Srednji', 'Visok', 'Kritican'];
+  prioriteti = ['Nizak', 'Srednji', 'Visok'];
 
   currentPage = 1;
   pageSize = 5;
@@ -43,7 +48,9 @@ export class ProjectTasksPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.projekatId = this.route.snapshot.paramMap.get('id')!;
-    this.isAdmin = this.authService.getCurrentUser()?.isAdmin ?? false;
+    const user = this.authService.getCurrentUser();
+    this.isAdmin = user?.isAdmin ?? false;
+    this.isPM = user?.isPM ?? false;
     this.ucitajZadatke();
   }
 

@@ -1,0 +1,53 @@
+<section class="my-tasks-page">
+  <div class="page-header">
+    <div>
+      <h1>Moji zadaci</h1>
+      <p>Zadaci koji su vam dodeljeni na svim projektima.</p>
+    </div>
+  </div>
+
+  @if (loading) {
+    <p>Ucitavanje zadataka...</p>
+  }
+
+  @if (greska) {
+    <p class="error">{{ greska }}</p>
+  }
+
+  @if (!loading && !greska && zadaci.length === 0) {
+    <div class="empty-state">
+      <p>Trenutno nemate dodeljenih zadataka.</p>
+    </div>
+  }
+
+  @if (!loading && !greska && zadaci.length > 0) {
+    <div class="tasks-list">
+      @for (zadatak of zadaci; track zadatak.id) {
+        <a class="task-card" [routerLink]="['/projekti', zadatak.projekatId, 'zadaci', zadatak.id]">
+          <div class="task-card-header">
+            <div class="task-title-block">
+              <h3>{{ zadatak.naslov }}</h3>
+              <span class="project-tag">{{ zadatak.projekatNaziv }}</span>
+            </div>
+            <div class="task-badges">
+              <span class="priority-pill priority-{{ zadatak.prioritet | lowercase }}">{{ zadatak.prioritet }}</span>
+              <span class="status-pill">{{ zadatak.status }}</span>
+            </div>
+          </div>
+
+          @if (zadatak.opis) {
+            <p class="task-opis">{{ zadatak.opis }}</p>
+          }
+
+          <div class="task-meta">
+            @if (zadatak.tipZadatka) {
+              <span class="meta-item">Tip: {{ zadatak.tipZadatka }}</span>
+            }
+            <span class="meta-item">Rok: {{ formatDate(zadatak.rok) }}</span>
+            <span class="meta-item">Kreirano: {{ formatDate(zadatak.datumKreiranja) }}</span>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</section>

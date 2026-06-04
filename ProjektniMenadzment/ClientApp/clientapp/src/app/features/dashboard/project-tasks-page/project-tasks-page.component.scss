@@ -20,6 +20,15 @@
   gap: 12px;
 }
 
+.create-link {
+  text-decoration: none;
+  background-color: #16a34a;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
 .back-link {
   text-decoration: none;
   background-color: #2563eb;
@@ -114,7 +123,6 @@
 .priority-nizak   { background: #dcfce7; color: #15803d; }
 .priority-srednji { background: #fef9c3; color: #a16207; }
 .priority-visok   { background: #ffedd5; color: #c2410c; }
-.priority-kritican { background: #fee2e2; color: #b91c1c; }
 
 .status-badge { background: #dbeafe; color: #1d4ed8; }
 

@@ -9,6 +9,7 @@ namespace ProjektniMenadzment.Repositories.Interfaces
         Task<Korisnici> GetByIdAsync(Guid id);
         Task<List<SelectListItem>> GetSelectOptionsAsync();
         Task<Korisnici> AddAsync(Korisnici korisnik);
+        Task<Korisnici> UpdateAsync(Korisnici korisnik);
         Task<Korisnici> GetByIdentityUserIdAsync(string identityUserId);
         Task<Korisnici?> GetByEmailAsync(string email);
     }

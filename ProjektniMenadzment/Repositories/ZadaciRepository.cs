@@ -51,6 +51,17 @@ namespace ProjektniMenadzment.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Zadaci>> GetByKorisnikIdAsync(Guid korisnikId)
+        {
+            return await _context.Zadacis
+                .Include(z => z.DodeljenKorisniku)
+                .Include(z => z.Projekat)
+                .Where(z => z.DodeljenKorisnikuId == korisnikId)
+                .OrderBy(z => z.Rok)
+                .ThenByDescending(z => z.DatumKreiranja)
+                .ToListAsync();
+        }
+
         public async Task<Zadaci> UpdateAsync(Zadaci zadatak)
         {
             var postojiZadatak = await _context.Zadacis.FirstOrDefaultAsync(z => z.Id == zadatak.Id);
@@ -94,7 +105,31 @@ namespace ProjektniMenadzment.Repositories
             var z = await _context.Zadacis.FindAsync(zadatakId);
             if (z == null) return false;
             z.DodeljenKorisnikuId = korisnikId;
-            if (z.Status == "Nije zapocet") z.Status = "U toku"; // opcionalno
+            if (z.Status == "Nije zapocet") z.Status = "U toku";
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> PreuzmiAsync(Guid zadatakId, Guid korisnikId)
+        {
+            var z = await _context.Zadacis.FindAsync(zadatakId);
+            if (z == null) return false;
+            if (z.DodeljenKorisnikuId != null) return false;
+
+            z.DodeljenKorisnikuId = korisnikId;
+            z.Status = "U toku";
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> OdustaniAsync(Guid zadatakId, Guid korisnikId)
+        {
+            var z = await _context.Zadacis.FindAsync(zadatakId);
+            if (z == null) return false;
+            if (z.DodeljenKorisnikuId != korisnikId) return false;
+
+            z.DodeljenKorisnikuId = null;
+            z.Status = "Nije zapocet";
             await _context.SaveChangesAsync();
             return true;
         }

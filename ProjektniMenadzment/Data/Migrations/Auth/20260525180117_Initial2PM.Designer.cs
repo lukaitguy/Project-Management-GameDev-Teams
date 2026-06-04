@@ -12,8 +12,8 @@ using ProjektniMenadzment.Data;
 namespace ProjektniMenadzment.Data.Migrations.Auth
 {
     [DbContext(typeof(PMAuthDbContext))]
-    [Migration("20250803203625_InitAuth")]
-    partial class InitAuth
+    [Migration("20260525180117_Initial2PM")]
+    partial class Initial2PM
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -169,17 +169,17 @@ namespace ProjektniMenadzment.Data.Migrations.Auth
                         {
                             Id = "881ecb32-8773-4199-8627-05dc87d5a810",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a44155ee-412f-411e-8c01-2fcd6dd70d5f",
+                            ConcurrencyStamp = "8859d678-66da-43f6-90a7-facdf8f05102",
                             Email = "administrator@pmdb.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMINISTRATOR@PMDB.COM",
-                            NormalizedUserName = "ADMINISTRATOR@PMDB.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEGJrJ/1pE6jNx6X4IEHpB/IirTO3w5Vjhprre2+StibTftD5X/tShdRtD/X9AI749g==",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKyCMJsApTnlWFqJq66qzo1CDUckQSmbkQo3lEZz3qvfe5/ZJegRkck2eLNygF7FyA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e54cef85-314c-4afd-ba41-4aa4747177af",
+                            SecurityStamp = "f04d14f0-81e2-470b-a668-c6eee684c231",
                             TwoFactorEnabled = false,
-                            UserName = "administrator@pmdb.com"
+                            UserName = "admin"
                         });
                 });
 

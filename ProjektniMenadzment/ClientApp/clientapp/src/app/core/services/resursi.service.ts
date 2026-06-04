@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { MojResurs } from '../models/moj-resurs.model';
 import { Resurs } from '../models/resurs.model';
 import { CreateResurs } from '../models/create-resurs.model';
 
@@ -10,6 +11,10 @@ import { CreateResurs } from '../models/create-resurs.model';
 export class ResursiService {
 
   constructor(private http: HttpClient) {}
+
+  getMojiResursi(): Observable<MojResurs[]> {
+    return this.http.get<MojResurs[]>('/api/resursi/moji');
+  }
 
   getByProjekatId(projekatId: string): Observable<Resurs[]> {
     return this.http.get<Resurs[]>(`/api/projekti/${projekatId}/resursi`);

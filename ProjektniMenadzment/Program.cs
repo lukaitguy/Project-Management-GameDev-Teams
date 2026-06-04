@@ -77,11 +77,15 @@ builder.Services.AddScoped<IZadaciKomentarRepository, ZadaciKomentarRepository>(
 builder.Services.AddScoped<IBuildoviRepository, BuildoviRepository>();
 
 // --- Services ---
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IProjektiService, ProjektiService>();
 builder.Services.AddScoped<IZanroviService, ZanroviService>();
 builder.Services.AddScoped<IZadaciService, ZadaciService>();
 builder.Services.AddScoped<IKomentariService, KomentariService>();
 builder.Services.AddScoped<IResursiService, ResursiService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAdminKorisniciService, AdminKorisniciService>();
 
 var app = builder.Build();
 

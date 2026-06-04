@@ -24,13 +24,26 @@
         Moji projekti
       </a>
 
+      <a routerLink="/moji-zadaci" routerLinkActive="active">
+        Moji zadaci
+      </a>
+
+      <a routerLink="/moji-resursi" routerLinkActive="active">
+        Moji resursi
+      </a>
+
       @if (korisnik?.isAdmin) {
         <a routerLink="/admin/projekti/novi" routerLinkActive="active" class="admin-link">
           Novi projekat
         </a>
+        <a routerLink="/admin/korisnici" routerLinkActive="active" class="admin-link">
+          Korisnici
+        </a>
       }
 
-      <!-- Zadaci, Resursi, Profil — coming soon -->
+      <a routerLink="/profil" routerLinkActive="active">
+        Profil
+      </a>
 
     </nav>
 

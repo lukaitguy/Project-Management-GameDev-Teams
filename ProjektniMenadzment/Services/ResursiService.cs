@@ -9,10 +9,12 @@ namespace ProjektniMenadzment.Services
     public class ResursiService : IResursiService
     {
         private readonly IResursiRepository _resursiRepository;
+        private readonly IKorisniciRepository _korisniciRepository;
 
-        public ResursiService(IResursiRepository resursiRepository)
+        public ResursiService(IResursiRepository resursiRepository, IKorisniciRepository korisniciRepository)
         {
             _resursiRepository = resursiRepository;
+            _korisniciRepository = korisniciRepository;
         }
 
         public async Task<ServiceResult<Guid>> CreateAsync(Guid projekatId, CreateResursDto dto)
@@ -79,6 +81,16 @@ namespace ProjektniMenadzment.Services
             return ServiceResult<IEnumerable<ResursListDto>>.Ok(resursi.Select(MapToDto));
         }
 
+        public async Task<ServiceResult<IEnumerable<MojResursDto>>> GetMojiResursiAsync(string identityUserId)
+        {
+            var korisnik = await _korisniciRepository.GetByIdentityUserIdAsync(identityUserId);
+            if (korisnik == null)
+                return ServiceResult<IEnumerable<MojResursDto>>.Fail("Korisnik nije pronadjen.");
+
+            var resursi = await _resursiRepository.GetByKorisnikIdAsync(korisnik.Id);
+            return ServiceResult<IEnumerable<MojResursDto>>.Ok(resursi.Select(MapToMojResursDto));
+        }
+
         public async Task<ServiceResult<bool>> UpdateAsync(Guid id, UpdateResursDto dto)
         {
             var validationMessage = ValidateResurs(dto.Naziv, dto.Tip);
@@ -106,6 +118,22 @@ namespace ProjektniMenadzment.Services
 
             return ServiceResult<bool>.Ok(true);
         }
+
+        private static MojResursDto MapToMojResursDto(Resursi r) => new()
+        {
+            Id = r.Id,
+            ProjekatId = r.ProjekatId ?? Guid.Empty,
+            ProjekatNaziv = r.Projekat?.Naziv ?? string.Empty,
+            Naziv = r.Naziv,
+            Tip = r.Tip,
+            Opis = r.Opis,
+            Cena = r.Cena,
+            DodeljenKorisniku = r.DodeljenKorisniku,
+            DodeljenKorisnikuIme = r.DodeljenKorisnikuNavigation != null
+                ? $"{r.DodeljenKorisnikuNavigation.Ime} {r.DodeljenKorisnikuNavigation.Prezime}"
+                : null,
+            DatumKreiranja = r.DatumKreiranja
+        };
 
         private static ResursListDto MapToDto(Resursi r) => new()
         {

@@ -29,7 +29,7 @@ export class ProjectTasksComponent implements OnInit {
   ucitavanje = true;
 
   statusi = ['Nije zapocet', 'U toku', 'Pauziran', 'Otkazan', 'Zavrsen'];
-  prioriteti = ['Nizak', 'Srednji', 'Visok', 'Kritican'];
+  prioriteti = ['Nizak', 'Srednji', 'Visok'];
   tipoviZadatka = ['Programiranje', 'Dizajn', 'Testiranje', 'Dokumentacija', 'Ostalo'];
 
   form: CreateZadatak = this.initForm();

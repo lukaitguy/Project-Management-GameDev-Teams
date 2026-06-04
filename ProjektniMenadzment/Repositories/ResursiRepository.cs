@@ -54,6 +54,16 @@ namespace ProjektniMenadzment.Repositories
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Resursi>> GetByKorisnikIdAsync(Guid korisnikId)
+        {
+            return await _context.Resursis
+                .Include(r => r.DodeljenKorisnikuNavigation)
+                .Include(r => r.Projekat)
+                .Where(r => r.DodeljenKorisniku == korisnikId)
+                .OrderByDescending(r => r.DatumKreiranja)
+                .ToListAsync();
+        }
+
         public async Task<Resursi?> UpdateAsync(Resursi resurs)
         {
             var postojeci = await _context.Resursis.FindAsync(resurs.Id);

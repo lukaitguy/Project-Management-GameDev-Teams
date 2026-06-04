@@ -21,6 +21,13 @@ import { ProjectResourcesComponent } from './features/dashboard/project-resource
 import { ProjectTasksPageComponent } from './features/dashboard/project-tasks-page/project-tasks-page.component';
 import { TaskDetailsComponent } from './features/dashboard/task-details/task-details.component';
 import { AddTaskComponent } from './features/dashboard/add-task/add-task.component';
+import { ProfileComponent } from './features/dashboard/profile/profile.component';
+import { ProjectMembersPageComponent } from './features/dashboard/project-members-page/project-members-page.component';
+import { MyTasksComponent } from './features/dashboard/my-tasks/my-tasks.component';
+import { MyResourcesComponent } from './features/dashboard/my-resources/my-resources.component';
+import { AdminUsersComponent } from './features/dashboard/admin-users/admin-users.component';
+import { AdminCreateUserComponent } from './features/dashboard/admin-create-user/admin-create-user.component';
+import { AdminEditUserComponent } from './features/dashboard/admin-edit-user/admin-edit-user.component';
 
 
 export const routes: Routes = [
@@ -54,13 +61,17 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardHomeComponent },
       { path: 'moji-projekti', component: MyProjectsComponent },
+      { path: 'moji-zadaci', component: MyTasksComponent },
+      { path: 'moji-resursi', component: MyResourcesComponent },
       { path: 'projekti/:id', component: ProjectDetailsComponent },
       { path: 'projekti/:id/buildovi', component: ProjectBuildsComponent },
       { path: 'projekti/:id/buildovi/novi', component: AddBuildComponent },
+      { path: 'projekti/:id/clanovi', component: ProjectMembersPageComponent },
       { path: 'projekti/:id/resursi', component: ProjectResourcesComponent },
       { path: 'projekti/:id/zadaci', component: ProjectTasksPageComponent },
       { path: 'projekti/:id/zadaci/novi', component: AddTaskComponent, canActivate: [adminGuard] },
       { path: 'projekti/:id/zadaci/:zadatakId', component: TaskDetailsComponent },
+      { path: 'profil', component: ProfileComponent },
       {
         path: 'admin/projekti/novi',
         component: AddProjectComponent,
@@ -69,6 +80,21 @@ export const routes: Routes = [
       {
         path: 'admin/projekti/:id/izmena',
         component: EditProjectComponent,
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'admin/korisnici',
+        component: AdminUsersComponent,
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'admin/korisnici/novi',
+        component: AdminCreateUserComponent,
+        canActivate: [adminGuard]
+      },
+      {
+        path: 'admin/korisnici/:id/izmena',
+        component: AdminEditUserComponent,
         canActivate: [adminGuard]
       }
     ]

@@ -62,7 +62,7 @@ export class ProjectResourcesComponent implements OnInit {
   ucitajClanove(): void {
     this.clanoviService.getByProjekatId(this.projekatId).subscribe({
       next: (data) => this.clanovi = data,
-      error: () => {}
+      error: () => { this.greska = 'Greška pri učitavanju članova projekta.'; }
     });
   }
 

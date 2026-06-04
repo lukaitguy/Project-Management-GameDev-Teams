@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ZadaciService } from '../../../core/services/zadaci.service';
 import { ClanoviService } from '../../../core/services/clanovi.service';
-import { AuthService } from '../../../core/services/auth.service';
 import { ClanProjekta } from '../../../core/models/clan-projekta.model';
 import { CreateZadatak } from '../../../core/models/create-zadatak.model';
 
@@ -24,7 +23,7 @@ export class AddTaskComponent implements OnInit {
   ucitavanjeClanova = true;
 
   statusi = ['Nije zapocet', 'U toku', 'Pauziran'];
-  prioriteti = ['Nizak', 'Srednji', 'Visok', 'Kritican'];
+  prioriteti = ['Nizak', 'Srednji', 'Visok'];
   tipoviZadatka = ['Programiranje', 'Dizajn', 'Testiranje', 'Dokumentacija', 'Ostalo'];
 
   form: CreateZadatak = this.initForm();
@@ -33,8 +32,7 @@ export class AddTaskComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private zadaciService: ZadaciService,
-    private clanoviService: ClanoviService,
-    private authService: AuthService
+    private clanoviService: ClanoviService
   ) {}
 
   ngOnInit(): void {

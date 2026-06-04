@@ -7,6 +7,11 @@
       <p>Pregled svih zadataka povezanih sa projektom.</p>
     </div>
     <div class="header-actions">
+      @if (canManage) {
+        <a class="create-link" [routerLink]="['/projekti', projekatId, 'zadaci', 'novi']">
+          + Kreiraj zadatak
+        </a>
+      }
       <a class="back-link" [routerLink]="['/projekti', projekatId]">
         Nazad na projekat
       </a>
