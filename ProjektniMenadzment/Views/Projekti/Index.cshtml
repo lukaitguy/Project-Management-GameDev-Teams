@@ -1,0 +1,158 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ProjektniMenadzment.Models.ViewModels
+@inject SignInManager<IdentityUser> SignInManager
+
+@model List<ProjekatViewModel>
+@{
+    ViewData["Title"] = "Projekti";
+    bool isSignedIn = SignInManager.IsSignedIn(User);
+    bool isAdminOrPM = User.IsInRole("Administrator") || User.IsInRole("ProjektniMenadzer");
+
+    string StatusBadge(string s) => s switch
+    {
+        "Planiran" => "bg-secondary",
+        "U toku" => "bg-info text-dark",
+        "Pauziran" => "bg-warning text-dark",
+        "Otkazan" => "bg-danger",
+        "Zavrsen" => "bg-success",
+        _ => "bg-light text-dark"
+    };
+
+    string q = (ViewBag.Search as string) ?? "";
+    string status = (ViewBag.Status as string) ?? "";
+}
+
+<style>
+    .card-soft {
+        border: 1px solid rgba(0,0,0,.06);
+        border-radius: 1rem;
+        box-shadow: 0 10px 28px rgba(0,0,0,.06);
+    }
+
+        .card-soft:hover {
+            box-shadow: 0 14px 38px rgba(0,0,0,.10);
+            transform: translateY(-2px);
+            transition: .2s ease;
+        }
+
+    .chip {
+        display: inline-block;
+        padding: .15rem .5rem;
+        border-radius: 999px;
+        background: #f1f5f9;
+        font-size: .8rem;
+    }
+
+    .muted {
+        color: #6b7280;
+    }
+
+    .kpi {
+        font-weight: 700;
+    }
+
+    .project-actions .btn {
+        min-width: 84px;
+    }
+</style>
+
+<div class="container my-4">
+
+    <!-- HEADER + CTA -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+        <div>
+            <h2 class="mb-1">Projekti</h2>
+            @if (!isAdminOrPM)
+            {
+                <div class="muted">Lista projekata u kojima ucestvujes</div>
+            }
+            else
+            {
+                <div class="muted">Pregled svih projekata i brze akcije</div>
+            }
+        </div>
+        @if (isAdminOrPM)
+        {
+            <a class="btn btn-dark" asp-action="Create">➕ Kreiraj projekat</a>
+        }
+    </div>
+
+    @if ((Model?.Count ?? 0) == 0)
+    {
+        if (!isAdminOrPM)
+        {
+            <div class="card card-soft p-4">
+                <div class="h5 mb-1">Nema projekata</div>
+                <div class="muted">Trenutno nisi clan nijednog projekta.</div>
+            </div>
+        }
+        else
+        {
+            <div class="card card-soft p-4">
+                <div class="h5 mb-1">Nema projekata</div>
+                <div class="muted mb-3">Kreiraj svoj prvi projekat i pozovi clanove tima.</div>
+                <a class="btn btn-dark" asp-action="Create">Kreiraj projekat</a>
+            </div>
+        }
+    }
+    else
+    {
+        <!-- GRID KARTICA -->
+        <div class="row g-3">
+            @foreach (var p in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-soft h-100">
+                        <div class="card-body d-flex flex-column">
+                            <!-- Naziv + status -->
+                            <div class="d-flex align-items-start justify-content-between">
+                                <h5 class="card-title mb-0">@p.Naziv</h5>
+                                <span class="badge @StatusBadge(p.Status)">@p.Status</span>
+                            </div>
+
+                            <!-- Meta -->
+                            <div class="mt-2">
+                                <div class="muted">
+                                    <span class="chip"><strong>Pocetak:</strong> @p.DatumPocetka:dd.MM.yyyy</span>
+                                    <span class="chip"><strong>Rok:</strong> @(p.Rok?.ToString("dd.MM.yyyy") ?? "—")</span>
+                                </div>
+                                <div class="muted mt-1">
+                                    Kreirao: <strong>@(p.KreiraoKorisnikIme ?? "Nepoznato")</strong>
+                                </div>
+                            </div>
+
+                            <!-- Kratak opis (ako imas opis u view modelu, prikazi ovde) -->
+                            @* <p class="mt-2 text-truncate">@(p.Opis ?? "")</p> *@
+
+                            <div class="mt-3 d-flex justify-content-between">
+                                <div class="muted small">ID: @p.Id</div>
+                                @* rezervisano za mini KPI ako dodas (npr. broj zadataka) *@
+                            </div>
+
+                            <!-- Akcije -->
+                            <div class="mt-3 d-flex gap-2 project-actions">
+                                @if (isAdminOrPM)
+                                {
+                                    <a class="btn btn-sm btn-dark" asp-action="Details" asp-route-id="@p.Id">Pregled</a>
+                                    <a class="btn btn-sm btn-outline-primary" asp-action="Edit" asp-route-id="@p.Id">Uredi</a>
+
+                                    <form asp-action="Delete" asp-route-id="@p.Id" method="post"
+                                          onsubmit="return confirm('Obrisati projekat? Ovo moze obrisati povezane podatke u skladu sa pravilima baze.');">
+                                        <button class="btn btn-sm btn-outline-danger">Obrisi</button>
+                                    </form>
+
+                                    <a class="btn btn-sm btn-outline-secondary" asp-controller="Zadaci" asp-action="Index" asp-route-projekatId="@p.Id">Zadaci</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-sm btn-dark" asp-controller="Zadaci" asp-action="Index" asp-route-projekatId="@p.Id">Zadaci</a>
+                                    <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@p.Id">Pregled</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,235 @@
+﻿@* 
+*@
+@using Microsoft.AspNetCore.Identity
+@using ProjektniMenadzment.Models.ViewModels
+@model HomeIndexViewModel
+@inject SignInManager<IdentityUser> SignInManager
+
+@{
+    ViewData["Title"] = "Pocetna";
+    var name = string.IsNullOrWhiteSpace(Model.DisplayName) ? "🎮 Dobrodošao/la" : $"🎮 Zdravo, {Model.DisplayName}";
+    string Stat(int value) => value.ToString("n0");
+    string Pct(decimal p) => $"{Math.Clamp(p, 0, 100):0}%";
+}
+
+<style>
+    /* suptilni hero gradient */
+    .hero {
+        background: radial-gradient(1200px 500px at 10% -10%, rgba(99,102,241,.18), transparent), radial-gradient(1200px 500px at 120% 10%, rgba(16,185,129,.18), transparent);
+        border-radius: 1.25rem;
+    }
+
+    .card-soft {
+        border: 1px solid rgba(0,0,0,.06);
+        box-shadow: 0 6px 24px rgba(0,0,0,.06);
+        border-radius: 1rem;
+    }
+
+    .chip {
+        display: inline-block;
+        padding: .15rem .5rem;
+        border-radius: 999px;
+        font-size: .75rem;
+        background: #f1f5f9;
+    }
+
+    .progress.thin {
+        height: .5rem;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-2px);
+        transition: .2s ease;
+    }
+</style>
+
+<div class="container py-4">
+
+    <!-- HERO -->
+    <div class="hero p-4 p-md-5 mb-4">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+                <h1 class="mb-2 fw-bold">@name</h1>
+                <p class="mb-0 text-muted">
+                    Centralno mesto za upravljanje projektima video-igara: zadaci, resursi, rokovi i tim.
+                </p>
+            </div>
+            <div class="d-flex gap-2">
+                @if (Model.IsAdminOrPM)
+                {
+                    <a class="btn btn-dark" href="@Url.Action("Create","Projekti")">➕ Novi projekat</a>
+                    <a class="btn btn-outline-dark" href="@Url.Action("Create","Zadaci")">➕ Novi zadatak</a>
+                }
+                else
+                {
+                    <a class="btn btn-dark" href="@Url.Action("Index","Projekti")">📁 Moji projekti</a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="card card-soft p-3">
+                <div class="d-flex justify-content-between">
+                    <span class="text-muted">Svi projekti</span>
+                    <span class="chip">@DateTime.Now:dd.MM.</span>
+                </div>
+                <div class="h3 mb-0 fw-bold">@Stat(Model.TotalProjects)</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card card-soft p-3">
+                <div class="text-muted">Moji projekti</div>
+                <div class="h3 mb-0 fw-bold">@Stat(Model.MyProjects)</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card card-soft p-3">
+                <div class="text-muted">Aktivni zadaci</div>
+                <div class="h3 mb-2 fw-bold">@Stat(Model.ActiveTasks)</div>
+                <div class="progress thin">
+                    <div class="progress-bar" role="progressbar" style="width:@Pct(Model.BudgetUsedPercent)" aria-valuenow="@Model.BudgetUsedPercent" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+                <small class="text-muted">Iskorišćen budžet: @Pct(Model.BudgetUsedPercent)</small>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="card card-soft p-3">
+                <div class="text-muted">Kasne zadaci</div>
+                <div class="h3 mb-0 fw-bold @(Model.OverdueTasks>0?"text-danger":"")">@Stat(Model.OverdueTasks)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- LEVO: Projekti -->
+        <div class="col-lg-6">
+            <div class="card card-soft p-3 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">Skorašnji projekti</h5>
+                    <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index","Projekti")">Vidi sve</a>
+                </div>
+
+                @if (Model.RecentProjects?.Any() == true)
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var p in Model.RecentProjects.Take(6))
+                        {
+                            var rokTxt = p.Rok?.ToString("dd.MM.yyyy") ?? "—";
+                            var statusBadge = p.Status switch
+                            {
+                                "Planiran" => "bg-secondary",
+                                "U toku" => "bg-info text-dark",
+                                "Završen" => "bg-success",
+                                _ => "bg-light text-dark"
+                            };
+                            <a class="list-group-item list-group-item-action hover-card" href="@Url.Action("Details","Projekti", new { id = p.Id })">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">@p.Naziv</h6>
+                                    <span class="badge @statusBadge">@p.Status</span>
+                                </div>
+                                <div class="mb-1">
+                                    <div class="progress thin">
+                                        <div class="progress-bar" role="progressbar" style="width:@p.ProgressPercent%" aria-valuenow="@p.ProgressPercent" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                                <small class="text-muted">Rok: @rokTxt</small>
+                            </a>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-muted">Nema projekata za prikaz.</div>
+                }
+            </div>
+        </div>
+
+        <!-- DESNO: Zadaci & Aktivnosti -->
+        <div class="col-lg-6">
+            <div class="card card-soft p-3 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">Predstojeći rokovi</h5>
+                    <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index","Zadaci")">Svi zadaci</a>
+                </div>
+
+                @if (Model.UpcomingTasks?.Any() == true)
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var t in Model.UpcomingTasks.Take(7))
+                        {
+                            var dueTxt = t.Due?.ToString("dd.MM.yyyy") ?? "—";
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <div class="fw-semibold">@t.Title</div>
+                                        <small class="text-muted">Projekat: @t.ProjectName</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="chip">@dueTxt</div><br />
+                                        @if (t.AssignedToMe)
+                                        {
+                                            <small class="text-success">Meni dodeljen</small>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="text-muted">Nema predstojećih rokova.</div>
+                }
+            </div>
+
+            <div class="card card-soft p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">Aktivnost tima</h5>
+                    <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("Index","Projekti")">Otvorite projekat</a>
+                </div>
+
+                @if (Model.TeamActivity?.Any() == true)
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var a in Model.TeamActivity.Take(8))
+                        {
+                            var whenLocal = a.WhenUtc.ToLocalTime().ToString("dd.MM.yyyy HH:mm");
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>@a.Text</span>
+                                <small class="text-muted">@whenLocal</small>
+                            </li>
+                        }
+                    </ul>
+                }
+                else
+                {
+                    <div class="text-muted">Još nema aktivnosti.</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- BRZE AKCIJE -->
+    <div class="mt-4">
+        <div class="card card-soft p-3">
+            <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+                <div class="fw-semibold">Brze akcije</div>
+                <div class="d-flex flex-wrap gap-2">
+                    <a class="btn btn-outline-dark" href="@Url.Action("Index","Projekti")">📁 Projekti</a>
+                    <a class="btn btn-outline-dark" href="@Url.Action("Index","Zadaci")">✅ Zadaci</a>
+                    <a class="btn btn-outline-dark" href="@Url.Action("Index","Resursi")">🧩 Resursi</a>
+                    @if (Model.IsAdminOrPM)
+                    {
+                        <a class="btn btn-outline-dark" href="@Url.Action("Index","UsersAdmin")">👥 Korisnici</a>
+                        <a class="btn btn-outline-dark" href="@Url.Action("Reports","Projekti")">📊 Izveštaji</a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
