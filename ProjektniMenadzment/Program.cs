@@ -98,6 +98,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.MapGet("/", () => Results.Redirect("/app"));
 app.UseRouting();
 app.UseCors("AllowAngular");
 app.UseAuthentication();
