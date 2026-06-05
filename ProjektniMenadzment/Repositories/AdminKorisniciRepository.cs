@@ -36,27 +36,6 @@ namespace ProjektniMenadzment.Repositories
                 throw new InvalidOperationException(string.Join("; ", res.Errors.Select(e => e.Description)));
         }
 
-        public async Task CreateAppUserAsync(KorisniciViewModel korisnik)
-        {
-            if (korisnik.Id.HasValue) return;
-
-            var postoji = await _app.Korisnicis.AnyAsync(x => x.IdentityUserId == korisnik.IdentityUserId);
-            if (postoji) return;
-
-            _app.Korisnicis.Add(new Korisnici
-            {
-                Id = Guid.NewGuid(),
-                Ime = korisnik.Ime ?? "",
-                Prezime = korisnik.Prezime ?? "",
-                Email = korisnik.Email,
-                BrojTelefona = korisnik.BrojTelefona,
-                Biografija = korisnik.Biografija,
-                DatumKreiranja = DateTime.UtcNow,
-                IdentityUserId = korisnik.IdentityUserId
-            });
-            await _app.SaveChangesAsync();
-        }
-
         public async Task DeleteAsync(string identityUserId)
         {
             var k = await _app.Korisnicis.FirstOrDefaultAsync(x => x.IdentityUserId == identityUserId);

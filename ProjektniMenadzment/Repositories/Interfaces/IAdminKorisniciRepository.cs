@@ -9,7 +9,6 @@ namespace ProjektniMenadzment.Repositories.Interfaces
         Task<List<string>> GetAllRolesAsync();
 
         Task UpdateAsync(KorisniciViewModel korisnik);
-        Task CreateAppUserAsync(KorisniciViewModel korisnik);
         Task DeleteAsync(string identityUserId);
         Task ChangePasswordAsync(PromenaLozinkeViewModel lozinka);
         Task CreateAsync(KreirajKorisnikaViewModel korisnik);
