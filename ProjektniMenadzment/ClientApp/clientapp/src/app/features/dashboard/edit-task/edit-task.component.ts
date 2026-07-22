@@ -1,4 +1,4 @@
-// features/dashboard/add-task/add-task.component.ts
+// features/dashboard/edit-task/edit-task.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,21 +11,24 @@ import { CreateZadatak } from '../../../core/models/create-zadatak.model';
 import { ProjekatDetails } from '../../../core/models/projekat-details.model';
 
 @Component({
-  selector: 'app-add-task',
+  selector: 'app-edit-task',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterLink],
-  templateUrl: './add-task.component.html',
-  styleUrl: './add-task.component.scss'
+  templateUrl: './edit-task.component.html',
+  styleUrl: './edit-task.component.scss'
 })
-export class AddTaskComponent implements OnInit {
+export class EditTaskComponent implements OnInit {
 
   projekatId = '';
+  zadatakId = '';
   clanovi: ClanProjekta[] = [];
   projekat: ProjekatDetails | null = null;
   greska: string | null = null;
-  ucitavanjeClanova = true;
+  uspeh: string | null = null;
+  ucitavanje = true;
+  cuvanje = false;
 
-  statusi = ['Nije zapocet', 'U toku', 'Pauziran'];
+  statusi = ['Nije zapocet', 'U toku', 'Pauziran', 'Otkazan', 'Zavrsen'];
   prioriteti = ['Nizak', 'Srednji', 'Visok'];
   tipoviZadatka = ['Programiranje', 'Dizajn', 'Testiranje', 'Dokumentacija', 'Ostalo'];
 
@@ -41,11 +44,13 @@ export class AddTaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.projekatId = this.route.snapshot.paramMap.get('id')!;
+    this.zadatakId = this.route.snapshot.paramMap.get('zadatakId')!;
     this.ucitajClanove();
     this.projektiService.getProjekat(this.projekatId).subscribe({
       next: (data) => this.projekat = data,
       error: () => { }
     });
+    this.ucitajZadatak();
   }
 
   get minRok(): string | null {
@@ -58,13 +63,28 @@ export class AddTaskComponent implements OnInit {
 
   ucitajClanove(): void {
     this.clanoviService.getByProjekatId(this.projekatId).subscribe({
+      next: (data) => this.clanovi = data,
+      error: () => { }
+    });
+  }
+
+  ucitajZadatak(): void {
+    this.zadaciService.getById(this.projekatId, this.zadatakId).subscribe({
       next: (data) => {
-        this.clanovi = data;
-        this.ucitavanjeClanova = false;
+        this.form = {
+          naslov: data.naslov,
+          opis: data.opis,
+          status: data.status,
+          prioritet: data.prioritet,
+          tipZadatka: data.tipZadatka,
+          rok: data.rok ? data.rok.substring(0, 10) : null,
+          dodeljenKorisnikuId: data.dodeljenKorisnikuId
+        };
+        this.ucitavanje = false;
       },
       error: () => {
-        this.greska = 'Greška pri učitavanju članova projekta.';
-        this.ucitavanjeClanova = false;
+        this.greska = 'Greška pri učitavanju zadatka.';
+        this.ucitavanje = false;
       }
     });
   }
@@ -107,18 +127,25 @@ export class AddTaskComponent implements OnInit {
     }
 
     this.greska = null;
+    this.uspeh = null;
+    this.cuvanje = true;
 
     const payload: CreateZadatak = {
       ...this.form,
       rok: this.form.rok || null
     };
 
-    this.zadaciService.create(this.projekatId, payload).subscribe({
+    this.zadaciService.update(this.projekatId, this.zadatakId, payload).subscribe({
       next: () => {
-        this.router.navigate(['/projekti', this.projekatId, 'zadaci']);
+        this.uspeh = 'Izmene zadatka su uspešno sačuvane.';
+        this.cuvanje = false;
+        setTimeout(() => {
+          this.router.navigate(['/projekti', this.projekatId, 'zadaci']);
+        }, 800);
       },
       error: (err) => {
-        this.greska = err.error?.message ?? 'Greška pri kreiranju zadatka.';
+        this.greska = err.error?.message ?? 'Greška pri izmeni zadatka.';
+        this.cuvanje = false;
       }
     });
   }

@@ -60,7 +60,12 @@ export class EditProjectComponent implements OnInit {
     this.greska = '';
     this.uspeh = '';
 
-    this.projektiService.update(this.projectId, this.projectForm.getRawValue()).subscribe({
+    const payload = {
+      ...this.projectForm.getRawValue(),
+      rok: this.projectForm.value.rok || null
+    };
+
+    this.projektiService.update(this.projectId, payload).subscribe({
       next: () => {
         this.uspeh = 'Izmene projekta su uspesno sacuvane.';
 

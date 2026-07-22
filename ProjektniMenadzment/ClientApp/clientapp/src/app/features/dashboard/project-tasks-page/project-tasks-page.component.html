@@ -60,8 +60,7 @@
   @if (!loading && !greska && pagedZadaci.length > 0) {
     <div class="task-list">
       @for (zadatak of pagedZadaci; track zadatak.id) {
-        <a class="task-card"
-           [routerLink]="['/projekti', projekatId, 'zadaci', zadatak.id]">
+        <div class="task-card" (click)="goToTask(zadatak.id)">
           <div class="task-card-header">
             <div>
               <h3>{{ zadatak.naslov }}</h3>
@@ -91,8 +90,14 @@
             <span class="task-date">
               Kreiran: {{ zadatak.datumKreiranja | date:'dd.MM.yyyy' }}
             </span>
+            @if (canManage) {
+              <div class="task-actions" (click)="$event.stopPropagation()">
+                <button class="btn-edit-sm" (click)="editTask(zadatak.id)">Izmeni</button>
+                <button class="btn-delete-sm" (click)="obrisiZadatak(zadatak)">Obriši</button>
+              </div>
+            }
           </div>
-        </a>
+        </div>
       }
     </div>
 

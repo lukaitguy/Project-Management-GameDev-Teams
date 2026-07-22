@@ -11,20 +11,25 @@ namespace ProjektniMenadzment.Services
         private readonly IProjektiRepository _projektiRepository;
         private readonly IKorisniciRepository _korisniciRepository;
         private readonly IClanoviProjektaRepository _clanoviProjektaRepository;
+        private readonly IZanroviRepository _zanroviRepository;
 
         public ProjektiService(
             IProjektiRepository projektiRepository,
             IKorisniciRepository korisniciRepository,
-            IClanoviProjektaRepository clanoviProjektaRepository)
+            IClanoviProjektaRepository clanoviProjektaRepository,
+            IZanroviRepository zanroviRepository)
         {
             _projektiRepository = projektiRepository;
             _korisniciRepository = korisniciRepository;
             _clanoviProjektaRepository = clanoviProjektaRepository;
+            _zanroviRepository = zanroviRepository;
         }
 
         public async Task<ServiceResult<Guid>> CreateAsync(CreateProjekatDto dto, string identityUserId)
         {
-            var validationMessage = ValidateProject(dto.Naziv, dto.Status, dto.DatumPocetka, dto.Rok);
+            var validationMessage = ValidateProject(
+                dto.Naziv, dto.Status, dto.DatumPocetka, dto.Rok, dto.Budzet,
+                dto.Opis, dto.VerzijaIgre, dto.Engine, dto.Platforma, dto.FazaRazvoja);
             if (validationMessage != null)
             {
                 return ServiceResult<Guid>.Fail(validationMessage);
@@ -52,6 +57,15 @@ namespace ProjektniMenadzment.Services
                 Platforma = CleanText(dto.Platforma),
                 FazaRazvoja = CleanText(dto.FazaRazvoja)
             };
+
+            if (dto.SelectedZanrIds.Count > 0)
+            {
+                var zanrovi = await _zanroviRepository.GetByIdsAsync(dto.SelectedZanrIds);
+                foreach (var zanr in zanrovi)
+                {
+                    projekat.Zanrs.Add(zanr);
+                }
+            }
 
             try
             {
@@ -120,7 +134,9 @@ namespace ProjektniMenadzment.Services
 
         public async Task<ServiceResult<bool>> UpdateAsync(Guid id, UpdateProjekatDto dto)
         {
-            var validationMessage = ValidateProject(dto.Naziv, dto.Status, dto.DatumPocetka, dto.Rok);
+            var validationMessage = ValidateProject(
+                dto.Naziv, dto.Status, dto.DatumPocetka, dto.Rok, dto.Budzet,
+                dto.Opis, dto.VerzijaIgre, dto.Engine, dto.Platforma, dto.FazaRazvoja);
             if (validationMessage != null)
             {
                 return ServiceResult<bool>.Fail(validationMessage);
@@ -192,16 +208,28 @@ namespace ProjektniMenadzment.Services
             });
         }
 
-        private static string? ValidateProject(string naziv, string status, DateTime datumPocetka, DateOnly? rok)
+        private static string? ValidateProject(
+            string naziv, string status, DateTime datumPocetka, DateOnly? rok, decimal? budzet,
+            string? opis, string? verzijaIgre, string? engine, string? platforma, string? fazaRazvoja)
         {
             if (string.IsNullOrWhiteSpace(naziv))
             {
                 return "Naziv projekta je obavezan.";
             }
 
+            if (naziv.Length > 50)
+            {
+                return "Naziv projekta ne sme imati vise od 50 karaktera.";
+            }
+
             if (string.IsNullOrWhiteSpace(status))
             {
                 return "Status projekta je obavezan.";
+            }
+
+            if (status.Length > 50)
+            {
+                return "Status ne sme imati vise od 50 karaktera.";
             }
 
             if (datumPocetka == default)
@@ -212,6 +240,36 @@ namespace ProjektniMenadzment.Services
             if (rok.HasValue && rok.Value < DateOnly.FromDateTime(datumPocetka.Date))
             {
                 return "Rok ne moze biti pre datuma pocetka.";
+            }
+
+            if (budzet.HasValue && budzet.Value < 0)
+            {
+                return "Budzet ne moze biti negativan.";
+            }
+
+            if (opis != null && opis.Length > 150)
+            {
+                return "Opis ne sme imati vise od 150 karaktera.";
+            }
+
+            if (verzijaIgre != null && verzijaIgre.Length > 20)
+            {
+                return "Verzija igre ne sme imati vise od 20 karaktera.";
+            }
+
+            if (engine != null && engine.Length > 50)
+            {
+                return "Engine ne sme imati vise od 50 karaktera.";
+            }
+
+            if (platforma != null && platforma.Length > 100)
+            {
+                return "Platforma ne sme imati vise od 100 karaktera.";
+            }
+
+            if (fazaRazvoja != null && fazaRazvoja.Length > 30)
+            {
+                return "Faza razvoja ne sme imati vise od 30 karaktera.";
             }
 
             return null;

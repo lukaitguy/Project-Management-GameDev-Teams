@@ -19,5 +19,12 @@ namespace ProjektniMenadzment.Repositories
                 .OrderBy(z => z.Naziv)
                 .ToListAsync();
         }
+
+        public async Task<List<Zanrovi>> GetByIdsAsync(IEnumerable<Guid> ids)
+        {
+            return await _context.Zanrovis
+                .Where(z => ids.Contains(z.Id))
+                .ToListAsync();
+        }
     }
 }

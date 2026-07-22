@@ -13,12 +13,24 @@
 
       <div class="form-group">
         <label for="naziv">Naziv projekta</label>
-        <input id="naziv" type="text" formControlName="naziv" />
+        <input id="naziv" type="text" formControlName="naziv" maxlength="50" />
+        @if (fieldInvalid('naziv')) {
+          <p class="field-error">
+            @if (projectForm.get('naziv')?.hasError('required')) {
+              Naziv projekta je obavezan.
+            } @else if (projectForm.get('naziv')?.hasError('maxlength')) {
+              Naziv projekta ne sme imati više od 50 karaktera.
+            }
+          </p>
+        }
       </div>
 
       <div class="form-group">
         <label for="opis">Opis</label>
-        <textarea id="opis" rows="4" formControlName="opis"></textarea>
+        <textarea id="opis" rows="4" formControlName="opis" maxlength="150"></textarea>
+        @if (fieldInvalid('opis')) {
+          <p class="field-error">Opis ne sme imati više od 150 karaktera.</p>
+        }
       </div>
 
       <div class="form-row">
@@ -32,7 +44,10 @@
 
         <div class="form-group">
           <label for="budzet">Budžet</label>
-          <input id="budzet" type="number" formControlName="budzet" />
+          <input id="budzet" type="number" formControlName="budzet" min="0" />
+          @if (fieldInvalid('budzet')) {
+            <p class="field-error">Budžet ne može biti negativan.</p>
+          }
         </div>
       </div>
 
@@ -40,30 +55,45 @@
         <div class="form-group">
           <label for="datumPocetka">Datum početka</label>
           <input id="datumPocetka" type="date" formControlName="datumPocetka" />
+          @if (fieldInvalid('datumPocetka')) {
+            <p class="field-error">Datum početka je obavezan.</p>
+          }
         </div>
 
         <div class="form-group">
           <label for="rok">Rok</label>
           <input id="rok" type="date" formControlName="rok" />
+          @if (rokPreDatumaPocetka) {
+            <p class="field-error">Rok ne može biti pre datuma početka.</p>
+          }
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="verzijaIgre">Verzija igre</label>
-          <input id="verzijaIgre" type="text" formControlName="verzijaIgre" />
+          <input id="verzijaIgre" type="text" formControlName="verzijaIgre" maxlength="20" />
+          @if (fieldInvalid('verzijaIgre')) {
+            <p class="field-error">Verzija igre ne sme imati više od 20 karaktera.</p>
+          }
         </div>
 
         <div class="form-group">
           <label for="engine">Engine</label>
-          <input id="engine" type="text" formControlName="engine" />
+          <input id="engine" type="text" formControlName="engine" maxlength="50" />
+          @if (fieldInvalid('engine')) {
+            <p class="field-error">Engine ne sme imati više od 50 karaktera.</p>
+          }
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label for="platforma">Platforma</label>
-          <input id="platforma" type="text" formControlName="platforma" />
+          <input id="platforma" type="text" formControlName="platforma" maxlength="100" />
+          @if (fieldInvalid('platforma')) {
+            <p class="field-error">Platforma ne sme imati više od 100 karaktera.</p>
+          }
         </div>
 
         <div class="form-group">
@@ -74,6 +104,25 @@
             <option value="Beta">Beta</option>
             <option value="Test">Test</option>
           </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Žanrovi</label>
+        <div class="zanrovi-list">
+          @for (zanr of zanrovi; track zanr.id) {
+            <label class="zanr-checkbox">
+              <input
+                type="checkbox"
+                [checked]="selectedZanrIds.includes(zanr.id)"
+                (change)="toggleZanr(zanr.id, $any($event.target).checked)"
+              />
+              {{ zanr.naziv }}
+            </label>
+          }
+          @if (!zanrovi.length) {
+            <p class="hint-text">Nema definisanih žanrova.</p>
+          }
         </div>
       </div>
 

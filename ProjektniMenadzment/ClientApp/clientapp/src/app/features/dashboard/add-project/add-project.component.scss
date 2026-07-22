@@ -87,9 +87,35 @@
   cursor: pointer;
 }
 
+.zanrovi-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+}
+
+.zanr-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.hint-text {
+  color: #64748b;
+  margin: 0;
+}
+
 .error-text {
   color: #dc2626;
   font-weight: 500;
+}
+
+.field-error {
+  color: #dc2626;
+  font-size: 13px;
+  margin: 0;
 }
 
 .success-text {

@@ -49,6 +49,10 @@ export class ZadaciService {
     return this.http.patch<void>(`/api/projekti/${projekatId}/zadaci/${id}/odustani`, {});
   }
 
+  dodeli(projekatId: string, id: string, korisnikId: string): Observable<void> {
+    return this.http.patch<void>(`/api/projekti/${projekatId}/zadaci/${id}/dodeli`, korisnikId);
+  }
+
   delete(projekatId: string, id: string): Observable<void> {
     return this.http.delete<void>(`/api/projekti/${projekatId}/zadaci/${id}`);
   }

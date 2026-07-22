@@ -20,7 +20,7 @@ builder.Services.AddDbContext<PMDbContext>(options =>
 builder.Services.AddDbContext<PMAuthDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("PMAuthDbConnectionString")));
 
-// --- Identity (use Core so it doesn't override JWT as default scheme) ---
+// --- Identity ---
 builder.Services.AddIdentityCore<IdentityUser>(options =>
 {
     options.Password.RequireDigit = true;

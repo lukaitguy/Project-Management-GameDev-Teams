@@ -1,7 +1,7 @@
 // features/dashboard/project-tasks-page/project-tasks-page.component.ts
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ZadaciService } from '../../../core/services/zadaci.service';
 import { AuthService } from '../../../core/services/auth.service';
@@ -42,6 +42,7 @@ export class ProjectTasksPageComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private zadaciService: ZadaciService,
     private authService: AuthService
   ) {}
@@ -103,5 +104,26 @@ export class ProjectTasksPageComponent implements OnInit {
     this.filterStatus = '';
     this.filterPrioritet = '';
     this.applyFilters();
+  }
+
+  goToTask(id: string): void {
+    this.router.navigate(['/projekti', this.projekatId, 'zadaci', id]);
+  }
+
+  editTask(id: string): void {
+    this.router.navigate(['/projekti', this.projekatId, 'zadaci', id, 'izmena']);
+  }
+
+  obrisiZadatak(zadatak: Zadatak): void {
+    if (!confirm(`Obrisati zadatak "${zadatak.naslov}"?`)) return;
+    this.zadaciService.delete(this.projekatId, zadatak.id).subscribe({
+      next: () => {
+        this.zadaci = this.zadaci.filter(z => z.id !== zadatak.id);
+        this.applyFilters();
+      },
+      error: () => {
+        this.greska = 'Greška pri brisanju zadatka.';
+      }
+    });
   }
 }

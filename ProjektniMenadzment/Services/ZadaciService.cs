@@ -10,13 +10,19 @@ namespace ProjektniMenadzment.Services
     {
         private readonly IZadaciRepository _zadaciRepository;
         private readonly IKorisniciRepository _korisniciRepository;
+        private readonly IProjektiRepository _projektiRepository;
+        private readonly IClanoviProjektaRepository _clanoviProjektaRepository;
 
         public ZadaciService(
             IZadaciRepository zadaciRepository,
-            IKorisniciRepository korisniciRepository)
+            IKorisniciRepository korisniciRepository,
+            IProjektiRepository projektiRepository,
+            IClanoviProjektaRepository clanoviProjektaRepository)
         {
             _zadaciRepository = zadaciRepository;
             _korisniciRepository = korisniciRepository;
+            _projektiRepository = projektiRepository;
+            _clanoviProjektaRepository = clanoviProjektaRepository;
         }
 
         public async Task<ServiceResult<IEnumerable<ZadatakListDto>>> GetByProjekatIdAsync(Guid projekatId)
@@ -46,9 +52,25 @@ namespace ProjektniMenadzment.Services
 
         public async Task<ServiceResult<Guid>> CreateAsync(Guid projekatId, CreateZadatakDto dto, string identityUserId)
         {
-            var validationMessage = ValidateZadatak(dto.Naslov, dto.Status, dto.Prioritet);
+            var validationMessage = ValidateZadatak(dto.Naslov, dto.Status, dto.Prioritet, dto.Opis, dto.TipZadatka);
             if (validationMessage != null)
                 return ServiceResult<Guid>.Fail(validationMessage);
+
+            var projekat = await _projektiRepository.GetByIdAsync(projekatId);
+            if (projekat == null)
+                return ServiceResult<Guid>.Fail("Projekat nije pronadjen.");
+
+            validationMessage = ValidateRokUnutarProjekta(dto.Rok, projekat.DatumPocetka, projekat.Rok);
+            if (validationMessage != null)
+                return ServiceResult<Guid>.Fail(validationMessage);
+
+            if (dto.DodeljenKorisnikuId.HasValue)
+            {
+                var clanoviProjekta = await _clanoviProjektaRepository.GetKorisniciByProjekatIdAsync(projekatId);
+                validationMessage = ValidateDodeljenKorisnik(dto.DodeljenKorisnikuId, clanoviProjekta);
+                if (validationMessage != null)
+                    return ServiceResult<Guid>.Fail(validationMessage);
+            }
 
             var korisnik = await _korisniciRepository.GetByIdentityUserIdAsync(identityUserId);
             if (korisnik == null)
@@ -83,13 +105,29 @@ namespace ProjektniMenadzment.Services
 
         public async Task<ServiceResult<bool>> UpdateAsync(Guid id, UpdateZadatakDto dto)
         {
-            var validationMessage = ValidateZadatak(dto.Naslov, dto.Status, dto.Prioritet);
+            var validationMessage = ValidateZadatak(dto.Naslov, dto.Status, dto.Prioritet, dto.Opis, dto.TipZadatka);
             if (validationMessage != null)
                 return ServiceResult<bool>.Fail(validationMessage);
 
             var zadatak = await _zadaciRepository.GetByIdAsync(id);
             if (zadatak == null)
                 return ServiceResult<bool>.Fail("Zadatak nije pronadjen.");
+
+            var projekat = await _projektiRepository.GetByIdAsync(zadatak.ProjekatId);
+            if (projekat == null)
+                return ServiceResult<bool>.Fail("Projekat nije pronadjen.");
+
+            validationMessage = ValidateRokUnutarProjekta(dto.Rok, projekat.DatumPocetka, projekat.Rok);
+            if (validationMessage != null)
+                return ServiceResult<bool>.Fail(validationMessage);
+
+            if (dto.DodeljenKorisnikuId.HasValue)
+            {
+                var clanoviProjekta = await _clanoviProjektaRepository.GetKorisniciByProjekatIdAsync(zadatak.ProjekatId);
+                validationMessage = ValidateDodeljenKorisnik(dto.DodeljenKorisnikuId, clanoviProjekta);
+                if (validationMessage != null)
+                    return ServiceResult<bool>.Fail(validationMessage);
+            }
 
             zadatak.Naslov = dto.Naslov.Trim();
             zadatak.Opis = CleanText(dto.Opis);
@@ -232,15 +270,49 @@ namespace ProjektniMenadzment.Services
 
         // ── Validators ───────────────────────────────────────────
 
-        private static string? ValidateZadatak(string naslov, string status, string prioritet)
+        private static string? ValidateZadatak(string naslov, string status, string prioritet, string? opis, string? tipZadatka)
         {
             if (string.IsNullOrWhiteSpace(naslov))
                 return "Naslov zadatka je obavezan.";
+            if (naslov.Length > 50)
+                return "Naslov zadatka ne sme imati vise od 50 karaktera.";
             if (string.IsNullOrWhiteSpace(status))
                 return "Status zadatka je obavezan.";
+            if (status.Length > 50)
+                return "Status zadatka ne sme imati vise od 50 karaktera.";
             if (string.IsNullOrWhiteSpace(prioritet))
                 return "Prioritet zadatka je obavezan.";
+            if (prioritet.Length > 50)
+                return "Prioritet zadatka ne sme imati vise od 50 karaktera.";
+            if (opis != null && opis.Length > 150)
+                return "Opis ne sme imati vise od 150 karaktera.";
+            if (tipZadatka != null && tipZadatka.Length > 30)
+                return "Tip zadatka ne sme imati vise od 30 karaktera.";
             return null;
+        }
+
+        private static string? ValidateRokUnutarProjekta(DateOnly? rok, DateTime projekatDatumPocetka, DateOnly? projekatRok)
+        {
+            if (!rok.HasValue)
+                return null;
+
+            if (rok.Value < DateOnly.FromDateTime(projekatDatumPocetka.Date))
+                return "Rok zadatka ne moze biti pre datuma pocetka projekta.";
+
+            if (projekatRok.HasValue && rok.Value > projekatRok.Value)
+                return "Rok zadatka ne moze biti posle roka projekta.";
+
+            return null;
+        }
+
+        private static string? ValidateDodeljenKorisnik(Guid? dodeljenKorisnikuId, List<Korisnici> clanoviProjekta)
+        {
+            if (!dodeljenKorisnikuId.HasValue)
+                return null;
+
+            return clanoviProjekta.Any(k => k.Id == dodeljenKorisnikuId.Value)
+                ? null
+                : "Izabrani korisnik nije clan projekta.";
         }
 
         private static string? CleanText(string? value) =>

@@ -22,6 +22,7 @@ import { ProjectResourcesComponent } from './features/dashboard/project-resource
 import { ProjectTasksPageComponent } from './features/dashboard/project-tasks-page/project-tasks-page.component';
 import { TaskDetailsComponent } from './features/dashboard/task-details/task-details.component';
 import { AddTaskComponent } from './features/dashboard/add-task/add-task.component';
+import { EditTaskComponent } from './features/dashboard/edit-task/edit-task.component';
 import { ProfileComponent } from './features/dashboard/profile/profile.component';
 import { ProjectMembersPageComponent } from './features/dashboard/project-members-page/project-members-page.component';
 import { MyTasksComponent } from './features/dashboard/my-tasks/my-tasks.component';
@@ -75,6 +76,7 @@ export const routes: Routes = [
       { path: 'projekti/:id/resursi/novi', component: AddResourceComponent, canActivate: [managerGuard] },
       { path: 'projekti/:id/zadaci', component: ProjectTasksPageComponent },
       { path: 'projekti/:id/zadaci/novi', component: AddTaskComponent, canActivate: [adminGuard] },
+      { path: 'projekti/:id/zadaci/:zadatakId/izmena', component: EditTaskComponent, canActivate: [managerGuard] },
       { path: 'projekti/:id/zadaci/:zadatakId', component: TaskDetailsComponent },
       { path: 'profil', component: ProfileComponent },
       {

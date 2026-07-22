@@ -5,8 +5,10 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ZadaciService } from '../../../core/services/zadaci.service';
 import { KomentariService } from '../../../core/services/komentari.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { ClanoviService } from '../../../core/services/clanovi.service';
 import { ZadatakDetails } from '../../../core/models/zadatak-details.model';
 import { Komentar } from '../../../core/models/komentar.model';
+import { ClanProjekta } from '../../../core/models/clan-projekta.model';
 
 @Component({
   selector: 'app-task-details',
@@ -41,13 +43,19 @@ export class TaskDetailsComponent implements OnInit {
   noviKomentar = '';
   komentarGreska = '';
 
+  clanovi: ClanProjekta[] = [];
+  odabraniClanId = '';
+  dodelaGreska = '';
+  dodelaLoading = false;
+
   statusi = ['Nije zapocet', 'U toku', 'Pauziran', 'Otkazan', 'Zavrsen'];
 
   constructor(
     private route: ActivatedRoute,
     private zadaciService: ZadaciService,
     private komentariService: KomentariService,
-    private authService: AuthService
+    private authService: AuthService,
+    private clanoviService: ClanoviService
   ) {}
 
   ngOnInit(): void {
@@ -59,6 +67,9 @@ export class TaskDetailsComponent implements OnInit {
     this.korisnikId = user?.korisnikId ?? null;
     this.ucitajZadatak();
     this.ucitajKomentare();
+    if (this.mozeDaUpravlja) {
+      this.ucitajClanove();
+    }
   }
 
   get mozeDaUpravlja(): boolean {
@@ -71,7 +82,7 @@ export class TaskDetailsComponent implements OnInit {
   }
 
   get mozeDaPreuzme(): boolean {
-    return !this.mozeDaUpravlja &&
+    return !this.isAdmin &&
            !this.zadatak?.dodeljenKorisnikuId &&
            this.zadatak?.status === 'Nije zapocet';
   }
@@ -143,6 +154,31 @@ export class TaskDetailsComponent implements OnInit {
       error: (err) => {
         this.odustaniGreska = err.error?.message ?? 'Greška pri odustajanju od zadatka.';
         this.odustajanje = false;
+      }
+    });
+  }
+
+  ucitajClanove(): void {
+    this.clanoviService.getByProjekatId(this.projekatId).subscribe({
+      next: (res) => this.clanovi = res,
+      error: () => this.clanovi = []
+    });
+  }
+
+  dodeliZadatak(): void {
+    if (!this.odabraniClanId) return;
+    this.dodelaGreska = '';
+    this.dodelaLoading = true;
+
+    this.zadaciService.dodeli(this.projekatId, this.zadatakId, this.odabraniClanId).subscribe({
+      next: () => {
+        this.dodelaLoading = false;
+        this.odabraniClanId = '';
+        this.ucitajZadatak();
+      },
+      error: (err) => {
+        this.dodelaGreska = err.error?.message ?? 'Greška pri dodeli zadatka.';
+        this.dodelaLoading = false;
       }
     });
   }

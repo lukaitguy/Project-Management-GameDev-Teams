@@ -136,6 +136,30 @@
 
 .task-date { margin-left: auto; color: #94a3b8; }
 
+.task-actions { display: flex; gap: 8px; }
+
+.btn-edit-sm {
+  padding: 5px 12px;
+  background: #e2e8f0;
+  color: #0f172a;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-delete-sm {
+  padding: 5px 12px;
+  background: #fee2e2;
+  color: #b91c1c;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .pagination {
   display: flex;
   justify-content: center;

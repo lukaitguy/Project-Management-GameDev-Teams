@@ -107,6 +107,28 @@
           </div>
         }
 
+        <!-- Dodela zadatka: visible only to PM/Admin -->
+        @if (mozeDaUpravlja) {
+          <div class="task-action">
+            <h4>Dodeli zadatak</h4>
+            @if (dodelaGreska) { <p class="error-text">{{ dodelaGreska }}</p> }
+            <div class="status-select-row">
+              <select [(ngModel)]="odabraniClanId" class="status-select">
+                <option value="">-- Odaberi korisnika --</option>
+                @for (c of clanovi; track c.korisnikId) {
+                  <option [value]="c.korisnikId">{{ c.ime }} {{ c.prezime }}</option>
+                }
+              </select>
+              <button
+                class="btn-primary"
+                (click)="dodeliZadatak()"
+                [disabled]="dodelaLoading || !odabraniClanId">
+                {{ dodelaLoading ? '...' : 'Dodeli' }}
+              </button>
+            </div>
+          </div>
+        }
+
         <!-- Odustani: only for the current assignee -->
         @if (jeDodeljenMeni) {
           <div class="task-action">

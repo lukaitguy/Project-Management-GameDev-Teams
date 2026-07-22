@@ -23,7 +23,7 @@
       <input
         [(ngModel)]="form.naslov"
         placeholder="Unesite naslov zadatka"
-        maxlength="200" />
+        maxlength="50" />
     </div>
 
     <div class="form-row">
@@ -76,7 +76,11 @@
 
       <div class="form-group">
         <label>Rok</label>
-        <input type="date" [(ngModel)]="form.rok" />
+        <input
+          type="date"
+          [(ngModel)]="form.rok"
+          [attr.min]="minRok"
+          [attr.max]="maxRok" />
       </div>
     </div>
 
@@ -85,7 +89,8 @@
       <textarea
         [(ngModel)]="form.opis"
         placeholder="Unesite opis zadatka..."
-        rows="4">
+        rows="4"
+        maxlength="150">
       </textarea>
     </div>
 

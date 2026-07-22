@@ -5,7 +5,7 @@ export interface CreateProjekat {
   budzet?: number | null;
   datumPocetka: string;
   rok?: string | null;
-  zanrId?: string | null;
+  selectedZanrIds?: string[];
 
   verzijaIgre?: string | null;
   engine?: string | null;
